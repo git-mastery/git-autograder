@@ -2,3 +2,7 @@ pytz
 difflib_parser
 GitPython
 types-pytz
+pytest
+twine
+build
+mypy
