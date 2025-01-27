@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "git-autograder"
+version = "0.1.1"
+authors = [{ name = "Jiahao, Woo", email = "woojiahao1234@gmail.com" }]
+description = "Library for autograding Git repositories"
+readme = "README.md"
+requires-python = ">=3.13"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development",
+  "Programming Language :: Python :: 3.13",
+]
+license.file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/git-mastery/git-autograder.git"
+Repository = "https://github.com/git-mastery/git-autograder.git"
+Issues = "https://github.com/git-mastery/git-autograder/issues"
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
+pythonpath = ["src"]
