@@ -107,4 +107,6 @@ class GitAutograderRepo:
             else status,
         )
         output.save()
+        if self.__is_local:
+            print(output)
         return output
