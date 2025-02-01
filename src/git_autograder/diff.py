@@ -1,6 +1,6 @@
 from typing import Optional, Iterator
 from dataclasses import dataclass
-from git import Commit
+from git import Commit, DiffIndex
 from git.diff import Diff, Lit_change_type
 from difflib_parser.difflib_parser import DiffParser
 
@@ -18,7 +18,7 @@ class GitAutograderDiff:
 
 class GitAutograderDiffHelper:
     def __init__(self, a: Commit, b: Commit) -> None:
-        self.diff_index = a.diff(b)
+        self.diff_index: DiffIndex[Diff] = a.diff(b)
 
     def iter_changes(self, change_type: Lit_change_type) -> Iterator[GitAutograderDiff]:
         for change in self.diff_index.iter_change_type(change_type):

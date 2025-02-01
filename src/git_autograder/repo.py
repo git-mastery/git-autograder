@@ -7,7 +7,7 @@ from typing import ClassVar, List, Optional
 
 import pytz
 from git_autograder.encoder import Encoder
-from git import Repo
+from git import Repo, Commit
 
 
 class GitAutograderStatus(StrEnum):
@@ -45,7 +45,7 @@ class GitAutograderRepo:
         if self.__exercise_name is None:
             raise Exception("Missing repository name")
 
-        self.repo = (
+        self.repo: Repo = (
             Repo("../main/")
             if not self.__is_local
             else Repo(f"../exercises/{self.__exercise_name}")
@@ -72,10 +72,10 @@ class GitAutograderRepo:
         if start_tag is None:
             raise Exception("Missing start tag")
 
-        self.start_commit = start_tag.commit
+        self.start_commit: Commit = start_tag.commit
         commits_asc = list(reversed(commits))
         start_commit_index = commits_asc.index(self.start_commit)
-        self.user_commits = commits_asc[start_commit_index + 1 :]
+        self.user_commits: List[Commit] = commits_asc[start_commit_index + 1 :]
 
         if len(self.user_commits) == 0:
             raise Exception("No user commits found")
