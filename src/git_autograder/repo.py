@@ -82,8 +82,17 @@ class GitAutograderRepo:
         if len(self.user_commits) == 0:
             raise Exception("No user commits found")
 
-        if self.__require_answers:
-            self.answers = GitAutograderAnswersParser()
+        self.answers: GitAutograderAnswersParser | None = (
+            (
+                GitAutograderAnswersParser("../main/answers.txt")
+                if not self.__is_local
+                else GitAutograderAnswersParser(
+                    f"../exercises/{self.__exercise_name}/answers.txt"
+                )
+            )
+            if self.__require_answers
+            else None
+        )
 
     @staticmethod
     def __now() -> datetime:
