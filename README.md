@@ -40,3 +40,6 @@ from git_autograder.diff import GitAutograderDiffHelper
 GitAutograderDiffHelper(commit_a, commit_b)
 ```
 
+## Unit tests
+
+To execute the unit tests, run `python -m pytest -s -vv`.
