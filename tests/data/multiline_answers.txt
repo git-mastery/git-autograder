@@ -1,0 +1,20 @@
+Q: This is a question
+
+
+That may span multiple lines
+
+
+This is a unique problem!
+
+A: This is also an answer that
+
+
+Will span more than just a single line
+
+
+```
+There is some weird syntax here too!
+```
+
+q: regular question but with lowercase
+A: REGULAR ANSWER BUT WITH UPPERCASE

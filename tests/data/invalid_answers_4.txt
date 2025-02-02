@@ -1,0 +1,7 @@
+q: valid
+
+a:
+
+a: invalid
+
+q: valid
