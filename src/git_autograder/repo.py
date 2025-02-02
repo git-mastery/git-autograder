@@ -6,6 +6,7 @@ from enum import StrEnum
 from typing import ClassVar, List, Optional
 
 import pytz
+from git_autograder.answers_parser import GitAutograderAnswersParser
 from git_autograder.encoder import Encoder
 from git import Repo, Commit
 
@@ -36,11 +37,12 @@ class GitAutograderOutput:
 
 
 class GitAutograderRepo:
-    def __init__(self, branch: str = "main") -> None:
+    def __init__(self, require_answers: bool = False, branch: str = "main") -> None:
         self.__branch = branch
         self.__started_at = self.__now()
         self.__is_local: bool = os.environ.get("is_local", "false") == "true"
         self.__exercise_name = os.environ.get("repository_name")
+        self.__require_answers = require_answers
 
         if self.__exercise_name is None:
             raise Exception("Missing repository name")
@@ -79,6 +81,9 @@ class GitAutograderRepo:
 
         if len(self.user_commits) == 0:
             raise Exception("No user commits found")
+
+        if self.__require_answers:
+            self.answers = GitAutograderAnswersParser()
 
     @staticmethod
     def __now() -> datetime:

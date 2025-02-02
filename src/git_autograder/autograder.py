@@ -4,7 +4,9 @@ from git_autograder.repo import GitAutograderRepo
 R = TypeVar("R")
 
 
-def autograder(branch: str = "main") -> Callable[[Callable[..., R]], Callable[..., R]]:
+def autograder(
+    require_answers: bool = False, branch: str = "main"
+) -> Callable[[Callable[..., R]], Callable[..., R]]:
     """
     Decorator to denote that a function is an autograder function.
 
@@ -13,7 +15,7 @@ def autograder(branch: str = "main") -> Callable[[Callable[..., R]], Callable[..
 
     def inner(func: Callable[..., R]) -> Callable[..., R]:
         def wrapper(*args, **kwargs) -> R:
-            repo = GitAutograderRepo(branch=branch)
+            repo = GitAutograderRepo(require_answers=require_answers, branch=branch)
             return func(repo, *args, **kwargs)
 
         return wrapper
