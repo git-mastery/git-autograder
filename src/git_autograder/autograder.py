@@ -1,3 +1,4 @@
+import functools
 from typing import Callable, TypeVar
 from git_autograder.repo import GitAutograderRepo
 
@@ -14,6 +15,7 @@ def autograder(
     """
 
     def inner(func: Callable[..., R]) -> Callable[..., R]:
+        @functools.wraps(func)
         def wrapper(*args, **kwargs) -> R:
             repo = GitAutograderRepo(require_answers=require_answers, branch=branch)
             return func(repo, *args, **kwargs)
