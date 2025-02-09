@@ -25,3 +25,4 @@ Issues = "https://github.com/git-mastery/git-autograder/issues"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
+pythonpath = ["src"]

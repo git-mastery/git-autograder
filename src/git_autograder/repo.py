@@ -37,20 +37,31 @@ class GitAutograderOutput:
 
 
 class GitAutograderRepo:
-    def __init__(self, require_answers: bool = False, branch: str = "main") -> None:
+    def __init__(
+        self,
+        require_answers: bool = False,
+        branch: str = "main",
+        repo_path: Optional[str | os.PathLike] = None,
+    ) -> None:
         self.__branch = branch
         self.__started_at = self.__now()
         self.__is_local: bool = os.environ.get("is_local", "false") == "true"
         self.__exercise_name = os.environ.get("repository_name")
         self.__require_answers = require_answers
+        self.__repo_path = repo_path
 
         if self.__exercise_name is None:
             raise Exception("Missing repository name")
 
+        # TODO Set this up to be more dynamic
         self.repo: Repo = (
-            Repo("../main/")
-            if not self.__is_local
-            else Repo(f"../exercises/{self.__exercise_name}")
+            Repo(self.__repo_path)
+            if self.__repo_path is not None
+            else (
+                Repo("../main")
+                if not self.__is_local
+                else Repo(f"../exercises/{self.__exercise_name}")
+            )
         )
 
         commits = []
