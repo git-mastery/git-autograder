@@ -158,7 +158,7 @@ class GitAutograderRepo:
     ) -> Optional[Tuple[GitAutograderDiff, Lit_change_type]]:
         # Based on the expectation that there can only exist one change type per file in a diff
         diff_helper = GitAutograderDiffHelper(a, b)
-        change_types: List[Lit_change_type] = ["A", "D", "C", "M", "R", "T", "U"]
+        change_types: List[Lit_change_type] = ["A", "D", "R", "M", "T"]
         for change_type in change_types:
             for change in diff_helper.iter_changes(change_type):
                 if (
