@@ -146,11 +146,19 @@ class GitAutograderRepo:
         return False
 
     def has_edited_file(self, file_path: str) -> bool:
-        for commit in self.user_commits:
-            diff_helper = GitAutograderDiffHelper(self.start_commit, commit)
-            for diff in diff_helper.iter_changes("M"):
-                if diff.edited_file_path == file_path:
-                    return True
+        latest_commit = self.user_commits[-1]
+        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+        for diff in diff_helper.iter_changes("M"):
+            if diff.edited_file_path == file_path:
+                return True
+        return False
+
+    def has_added_file(self, file_path: str) -> bool:
+        latest_commit = self.user_commits[-1]
+        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+        for diff in diff_helper.iter_changes("A"):
+            if diff.edited_file_path == file_path:
+                return True
         return False
 
     def get_file_diff(
