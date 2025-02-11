@@ -5,12 +5,13 @@ from datetime import datetime
 from enum import StrEnum
 from typing import ClassVar, List, Optional, Tuple
 
-from git.diff import Lit_change_type
 import pytz
+from git import Commit, Repo
+from git.diff import Lit_change_type
+
 from git_autograder.answers_parser import GitAutograderAnswersParser
-from git_autograder.encoder import Encoder
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
-from git import Repo, Commit
+from git_autograder.encoder import Encoder
 
 
 class GitAutograderStatus(StrEnum):
