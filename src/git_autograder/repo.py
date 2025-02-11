@@ -161,10 +161,7 @@ class GitAutograderRepo:
         change_types: List[Lit_change_type] = ["A", "D", "R", "M", "T"]
         for change_type in change_types:
             for change in diff_helper.iter_changes(change_type):
-                if (
-                    change.diff_parser is not None
-                    or change.edited_file_path != file_path
-                ):
+                if change.diff_parser is None or change.edited_file_path != file_path:
                     continue
                 return change, change_type
         return None
