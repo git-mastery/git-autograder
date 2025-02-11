@@ -3,11 +3,13 @@ import os
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import StrEnum
-from typing import ClassVar, List, Optional
+from typing import ClassVar, List, Optional, Tuple
 
+from git.diff import Lit_change_type
 import pytz
 from git_autograder.answers_parser import GitAutograderAnswersParser
 from git_autograder.encoder import Encoder
+from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
 from git import Repo, Commit
 
 
@@ -135,3 +137,33 @@ class GitAutograderRepo:
         if self.__is_local:
             print(output)
         return output
+
+    def has_non_empty_commits(self) -> bool:
+        for commit in self.user_commits:
+            if len(commit.stats.files) > 0:
+                return True
+        return False
+
+    def has_edited_file(self, file_path: str) -> bool:
+        for commit in self.user_commits:
+            diff_helper = GitAutograderDiffHelper(self.start_commit, commit)
+            for diff in diff_helper.iter_changes("M"):
+                if diff.edited_file_path == file_path:
+                    return True
+        return False
+
+    def get_file_diff(
+        self, a: Commit, b: Commit, file_path: str
+    ) -> Optional[Tuple[GitAutograderDiff, Lit_change_type]]:
+        # Based on the expectation that there can only exist one change type per file in a diff
+        diff_helper = GitAutograderDiffHelper(a, b)
+        change_types: List[Lit_change_type] = ["A", "D", "C", "M", "R", "T", "U"]
+        for change_type in change_types:
+            for change in diff_helper.iter_changes(change_type):
+                if (
+                    change.diff_parser is not None
+                    or change.edited_file_path != file_path
+                ):
+                    continue
+                return change, change_type
+        return None
