@@ -30,11 +30,14 @@ def setup_autograder(
     step_id: str,
     grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
     setup: Callable[[Repo], None],
+    require_answers: bool = False,
 ) -> Iterator[GitAutograderOutput]:
     repo_initializer = initialize_repo(spec_path)
     attach_start_tag(repo_initializer, step_id)
     with repo_initializer.initialize() as r:
         setup(r)
-        autograder = GitAutograderRepo(repo_path=r.working_dir)
+        autograder = GitAutograderRepo(
+            repo_path=r.working_dir, require_answers=require_answers
+        )
         result: GitAutograderOutput = grade_func(autograder)
         yield result
