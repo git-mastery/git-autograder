@@ -98,7 +98,9 @@ class GitAutograderRepo:
 
         self.answers: GitAutograderAnswersParser | None = (
             (
-                GitAutograderAnswersParser("../main/answers.txt")
+                GitAutograderAnswersParser(f"{self.__repo_path}/answers.txt")
+                if self.__repo_path is not None
+                else GitAutograderAnswersParser("../main/answers.txt")
                 if not self.__is_local
                 else GitAutograderAnswersParser(
                     f"../exercises/{self.__exercise_name}/answers.txt"
