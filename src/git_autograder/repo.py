@@ -5,8 +5,9 @@ from datetime import datetime
 from enum import StrEnum
 from typing import ClassVar, List, Optional, Tuple
 
+from git.exc import CommandError
 import pytz
-from git import Commit, Repo
+from git import Commit, Head, Repo
 from git.diff import Lit_change_type
 
 from git_autograder.answers_parser import GitAutograderAnswersParser
@@ -42,15 +43,11 @@ class GitAutograderOutput:
 class GitAutograderRepo:
     def __init__(
         self,
-        require_answers: bool = False,
-        branch: str = "main",
         repo_path: Optional[str | os.PathLike] = None,
     ) -> None:
-        self.__branch = branch
         self.__started_at = self.__now()
         self.__is_local: bool = os.environ.get("is_local", "false") == "true"
         self.__exercise_name = os.environ.get("repository_name")
-        self.__require_answers = require_answers
         self.__repo_path = repo_path
 
         if self.__exercise_name is None:
@@ -67,15 +64,46 @@ class GitAutograderRepo:
             )
         )
 
+    @staticmethod
+    def __now() -> datetime:
+        return datetime.now(tz=pytz.UTC)
+
+    def answers(self) -> GitAutograderAnswersParser:
+        """Parses a QnA file (answers.txt). Verifies that the file exists."""
+        return (
+            GitAutograderAnswersParser(f"{self.__repo_path}/answers.txt")
+            if self.__repo_path is not None
+            else GitAutograderAnswersParser("../main/answers.txt")
+            if not self.__is_local
+            else GitAutograderAnswersParser(
+                f"../exercises/{self.__exercise_name}/answers.txt"
+            )
+        )
+
+    def commits(self, branch: str = "main") -> List[Commit]:
+        """Retrieve the available commits of a given branch."""
         commits = []
-        first_commit = None
-        for commit in self.repo.iter_commits(self.__branch):
+        for commit in self.repo.iter_commits(branch):
+            commits.append(commit)
+
+        return commits
+
+    def start_commit(self, branch: str = "main") -> Commit:
+        """
+        Find the Git Mastery start commit from the given branch.
+
+        Raises exceptions if the branch has no commits or if the start tag is not
+        present.
+        """
+        commits = self.commits(branch)
+        for commit in self.repo.iter_commits(branch):
             first_commit = commit
             commits.append(commit)
 
-        if first_commit is None:
-            raise Exception("Missing first commit")
+        if len(commits) == 0:
+            raise Exception("No commits")
 
+        first_commit = commits[0]
         first_commit_hash = first_commit.hexsha
         start_tag_name = f"git-mastery-start-{first_commit_hash[:7]}"
 
@@ -86,33 +114,27 @@ class GitAutograderRepo:
                 break
 
         if start_tag is None:
-            raise Exception("Missing start tag")
+            raise Exception("Missing start commit")
 
-        self.start_commit: Commit = start_tag.commit
+        return start_tag.commit
+
+    def user_commits(self, branch: str = "main") -> List[Commit]:
+        """
+        Retrieves only the user commits from a given branch.
+
+        Raises exceptions if the branch has no commits, start tag is not present, or if
+        there are no user commits available.
+        """
+        start_commit = self.start_commit(branch)
+        commits = self.commits(branch)
         commits_asc = list(reversed(commits))
-        start_commit_index = commits_asc.index(self.start_commit)
-        self.user_commits: List[Commit] = commits_asc[start_commit_index + 1 :]
+        start_commit_index = commits_asc.index(start_commit)
+        user_commits = commits_asc[start_commit_index + 1 :]
 
-        if len(self.user_commits) == 0:
+        if len(user_commits) == 0:
             raise Exception("No user commits found")
 
-        self.answers: GitAutograderAnswersParser | None = (
-            (
-                GitAutograderAnswersParser(f"{self.__repo_path}/answers.txt")
-                if self.__repo_path is not None
-                else GitAutograderAnswersParser("../main/answers.txt")
-                if not self.__is_local
-                else GitAutograderAnswersParser(
-                    f"../exercises/{self.__exercise_name}/answers.txt"
-                )
-            )
-            if self.__require_answers
-            else None
-        )
-
-    @staticmethod
-    def __now() -> datetime:
-        return datetime.now(tz=pytz.UTC)
+        return user_commits
 
     def save_as_output(
         self, comments: List[str], status: Optional[GitAutograderStatus] = None
@@ -141,23 +163,26 @@ class GitAutograderRepo:
             print(output)
         return output
 
-    def has_non_empty_commits(self) -> bool:
-        for commit in self.user_commits:
+    def has_non_empty_commits(self, branch: str = "main") -> bool:
+        """Returns if a given branch has any non-empty commits."""
+        for commit in self.user_commits(branch):
             if len(commit.stats.files) > 0:
                 return True
         return False
 
-    def has_edited_file(self, file_path: str) -> bool:
-        latest_commit = self.user_commits[-1]
-        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+    def has_edited_file(self, file_path: str, branch: str = "main") -> bool:
+        """Returns if a given file has been edited in a given branch."""
+        latest_commit = self.user_commits(branch)[-1]
+        diff_helper = GitAutograderDiffHelper(self.start_commit(branch), latest_commit)
         for diff in diff_helper.iter_changes("M"):
             if diff.edited_file_path == file_path:
                 return True
         return False
 
-    def has_added_file(self, file_path: str) -> bool:
-        latest_commit = self.user_commits[-1]
-        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+    def has_added_file(self, file_path: str, branch: str = "main") -> bool:
+        """Returns if a given file has been added in a given branch."""
+        latest_commit = self.user_commits(branch)[-1]
+        diff_helper = GitAutograderDiffHelper(self.start_commit(branch), latest_commit)
         for diff in diff_helper.iter_changes("A"):
             if diff.edited_file_path == file_path:
                 return True
@@ -166,6 +191,7 @@ class GitAutograderRepo:
     def get_file_diff(
         self, a: Commit, b: Commit, file_path: str
     ) -> Optional[Tuple[GitAutograderDiff, Lit_change_type]]:
+        """Returns file difference between two commits across ALL change types."""
         # Based on the expectation that there can only exist one change type per file in a diff
         diff_helper = GitAutograderDiffHelper(a, b)
         change_types: List[Lit_change_type] = ["A", "D", "R", "M", "T"]
@@ -175,3 +201,11 @@ class GitAutograderRepo:
                     continue
                 return change, change_type
         return None
+
+    def get_current_branch_parent(self) -> Head:
+        branch_info_raw = self.repo.git.execute(["git", "show-branch", "-a"])
+        assert isinstance(branch_info_raw, str)
+        branch_info_str: str = str(branch_info_raw)
+        lines = branch_info_str.split("\n")
+
+        return self.repo.active_branch
