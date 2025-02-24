@@ -1,9 +1,0 @@
-initialization:
-  steps:
-    - type: commit
-      empty: true
-      message: First commit
-      id: commit
-    - type: commit
-      empty: true
-      message: Next commit
