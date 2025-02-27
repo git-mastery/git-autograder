@@ -94,6 +94,7 @@ class GitAutograderRepo:
         Raises exceptions if the branch has no commits or if the start tag is not
         present.
         """
+        first_commit = None
         commits = self.commits(branch)
         for commit in self.repo.iter_commits(branch):
             first_commit = commit
@@ -102,7 +103,8 @@ class GitAutograderRepo:
         if len(commits) == 0:
             raise Exception("No commits")
 
-        first_commit = commits[0]
+        assert first_commit is not None
+
         first_commit_hash = first_commit.hexsha
         start_tag_name = f"git-mastery-start-{first_commit_hash[:7]}"
 
@@ -200,11 +202,3 @@ class GitAutograderRepo:
                     continue
                 return change, change_type
         return None
-
-    def get_current_branch_parent(self) -> Head:
-        branch_info_raw = self.repo.git.execute(["git", "show-branch", "-a"])
-        assert isinstance(branch_info_raw, str)
-        branch_info_str: str = str(branch_info_raw)
-        lines = branch_info_str.split("\n")
-
-        return self.repo.active_branch
