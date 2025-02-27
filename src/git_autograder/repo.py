@@ -5,7 +5,6 @@ from datetime import datetime
 from enum import StrEnum
 from typing import ClassVar, List, Optional, Tuple
 
-from git.exc import CommandError
 import pytz
 from git import Commit, Head, Repo
 from git.diff import Lit_change_type
