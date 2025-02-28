@@ -202,3 +202,16 @@ class GitAutograderRepo:
                     continue
                 return change, change_type
         return None
+
+    def has_branch(self, branch: str) -> bool:
+        return branch in self.repo.heads
+
+    def is_child_commit(self, child: Commit, commit: Commit) -> bool:
+        if child == commit:
+            return True
+
+        res = False
+        for parent in child.parents:
+            res |= self.is_child_commit(parent, commit)
+
+        return res
