@@ -45,7 +45,7 @@ class GitAutograderRepo:
         repo_path: Optional[str | os.PathLike] = None,
     ) -> None:
         self.__started_at = self.__now()
-        self.__is_local: bool = os.environ.get("is_local", "false") == "true"
+        self.is_local: bool = os.environ.get("is_local", "false") == "true"
         self.__exercise_name = os.environ.get("repository_name")
         self.__repo_path = repo_path
 
@@ -58,7 +58,7 @@ class GitAutograderRepo:
             if self.__repo_path is not None
             else (
                 Repo("../main")
-                if not self.__is_local
+                if not self.is_local
                 else Repo(f"../exercises/{self.__exercise_name}")
             )
         )
@@ -73,7 +73,7 @@ class GitAutograderRepo:
             GitAutograderAnswersParser(f"{self.__repo_path}/answers.txt")
             if self.__repo_path is not None
             else GitAutograderAnswersParser("../main/answers.txt")
-            if not self.__is_local
+            if not self.is_local
             else GitAutograderAnswersParser(
                 f"../exercises/{self.__exercise_name}/answers.txt"
             )
@@ -149,7 +149,7 @@ class GitAutograderRepo:
             exercise_name=self.__exercise_name,
             started_at=self.__started_at,
             completed_at=self.__now(),
-            is_local=self.__is_local,
+            is_local=self.is_local,
             comments=comments,
             status=(
                 GitAutograderStatus.SUCCESSFUL
@@ -160,7 +160,7 @@ class GitAutograderRepo:
             else status,
         )
         output.save()
-        if self.__is_local:
+        if self.is_local:
             print(output)
         return output
 
