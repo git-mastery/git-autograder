@@ -8,7 +8,10 @@ from git.diff import Lit_change_type
 
 from git_autograder.answers_parser import GitAutograderAnswersParser
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
-from git_autograder.exception import GitAutograderInvalidStateException
+from git_autograder.exception import (
+    GitAutograderInvalidStateException,
+    GitAutograderWrongAnswerException,
+)
 from git_autograder.status import GitAutograderStatus
 from git_autograder.output import GitAutograderOutput
 
@@ -45,6 +48,34 @@ class GitAutograderRepo:
     @staticmethod
     def __now() -> datetime:
         return datetime.now(tz=pytz.UTC)
+
+    def to_output(
+        self, comments: List[str], status: Optional[GitAutograderStatus] = None
+    ) -> GitAutograderOutput:
+        """
+        Creates a GitAutograderOutput object.
+
+        If there is no status provided, the status will be inferred from the comments.
+        """
+        return GitAutograderOutput(
+            exercise_name=self.__exercise_name,
+            started_at=self.__started_at,
+            completed_at=self.__now(),
+            is_local=self.is_local,
+            comments=comments,
+            status=(
+                GitAutograderStatus.SUCCESSFUL
+                if len(comments) == 0
+                else GitAutograderStatus.UNSUCCESSFUL
+            )
+            if status is None
+            else status,
+        )
+
+    def wrong_answer(self, comments: List[str]) -> None:
+        raise GitAutograderWrongAnswerException(
+            comments, self.__exercise_name, self.__started_at, self.is_local
+        )
 
     def answers(self) -> GitAutograderAnswersParser:
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
@@ -121,29 +152,6 @@ class GitAutograderRepo:
         user_commits = commits_asc[start_commit_index + 1 :]
 
         return user_commits
-
-    def to_output(
-        self, comments: List[str], status: Optional[GitAutograderStatus] = None
-    ) -> GitAutograderOutput:
-        """
-        Creates a GitAutograderOutput object.
-
-        If there is no status provided, the status will be inferred from the comments.
-        """
-        return GitAutograderOutput(
-            exercise_name=self.__exercise_name,
-            started_at=self.__started_at,
-            completed_at=self.__now(),
-            is_local=self.is_local,
-            comments=comments,
-            status=(
-                GitAutograderStatus.SUCCESSFUL
-                if len(comments) == 0
-                else GitAutograderStatus.UNSUCCESSFUL
-            )
-            if status is None
-            else status,
-        )
 
     def has_non_empty_commits(self, branch: str = "main") -> bool:
         """Returns if a given branch has any non-empty commits."""

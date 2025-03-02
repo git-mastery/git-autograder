@@ -45,7 +45,7 @@ def autograder() -> Callable[
                     started_at=e.started_at,
                     completed_at=datetime.now(tz=pytz.UTC),
                     is_local=e.is_local,
-                    comments=[e.message],
+                    comments=[e.message] if isinstance(e.message, str) else e.message,
                     status=e.status,
                 )
             except Exception as e:

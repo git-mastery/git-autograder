@@ -1,13 +1,20 @@
 import os
 from contextlib import contextmanager
-from typing import Callable, Iterator
+from datetime import datetime
+from typing import Callable, Iterator, Optional
 from unittest import mock
 
+import pytz
 from git import Repo
 from repo_smith.initialize_repo import RepoInitializer, initialize_repo
 
-from git_autograder.repo import GitAutograderRepo
+from git_autograder.exception import (
+    GitAutograderInvalidStateException,
+    GitAutograderWrongAnswerException,
+)
 from git_autograder.output import GitAutograderOutput
+from git_autograder.repo import GitAutograderRepo
+from git_autograder.status import GitAutograderStatus
 
 
 def attach_start_tag(repo_initializer: RepoInitializer, step_id: str) -> None:
@@ -36,6 +43,32 @@ def setup_autograder(
     attach_start_tag(repo_initializer, step_id)
     with repo_initializer.initialize() as r:
         setup(r)
-        autograder = GitAutograderRepo(repo_path=r.working_dir)
-        result: GitAutograderOutput = grade_func(autograder)
-        yield result
+        output: Optional[GitAutograderOutput] = None
+        try:
+            autograder = GitAutograderRepo(repo_path=r.working_dir)
+            output = grade_func(autograder)
+        except (
+            GitAutograderInvalidStateException,
+            GitAutograderWrongAnswerException,
+        ) as e:
+            output = GitAutograderOutput(
+                exercise_name=e.exercise_name,
+                started_at=e.started_at,
+                completed_at=datetime.now(tz=pytz.UTC),
+                is_local=e.is_local,
+                comments=[e.message] if isinstance(e.message, str) else e.message,
+                status=e.status,
+            )
+        except Exception as e:
+            # Unexpected exception
+            output = GitAutograderOutput(
+                exercise_name=None,
+                started_at=None,
+                completed_at=None,
+                is_local=None,
+                comments=[str(e)],
+                status=GitAutograderStatus.ERROR,
+            )
+
+        assert output is not None
+        yield output
