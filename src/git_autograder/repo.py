@@ -72,8 +72,8 @@ class GitAutograderRepo:
             else status,
         )
 
-    def wrong_answer(self, comments: List[str]) -> None:
-        raise GitAutograderWrongAnswerException(
+    def wrong_answer(self, comments: List[str]) -> GitAutograderWrongAnswerException:
+        return GitAutograderWrongAnswerException(
             comments, self.__exercise_name, self.__started_at, self.is_local
         )
 
