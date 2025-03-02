@@ -1,9 +1,6 @@
-import json
 import os
-from dataclasses import asdict, dataclass
 from datetime import datetime
-from enum import StrEnum
-from typing import ClassVar, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import pytz
 from git import Commit, Repo
@@ -11,32 +8,9 @@ from git.diff import Lit_change_type
 
 from git_autograder.answers_parser import GitAutograderAnswersParser
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
-from git_autograder.encoder import Encoder
-
-
-class GitAutograderStatus(StrEnum):
-    SUCCESSFUL = "SUCCESSFUL"
-    UNSUCCESSFUL = "UNSUCCESSFUL"
-    ERROR = "ERROR"
-
-
-@dataclass
-class GitAutograderOutput:
-    started_at: datetime
-    completed_at: datetime
-    is_local: bool
-    status: GitAutograderStatus
-    comments: Optional[List[str]] = None
-    exercise_name: Optional[str] = None
-
-    OUTPUT_FILE_NAME: ClassVar[str] = "output.json"
-
-    def save(self, path: str = "../output") -> None:
-        os.makedirs(path, exist_ok=True)
-        file_path = os.path.join(path, self.OUTPUT_FILE_NAME)
-        output = asdict(self)
-        with open(file_path, "w") as f:
-            f.write(json.dumps(output, cls=Encoder))
+from git_autograder.exception import GitAutograderInvalidStateException
+from git_autograder.status import GitAutograderStatus
+from git_autograder.output import GitAutograderOutput
 
 
 class GitAutograderRepo:
@@ -50,7 +24,12 @@ class GitAutograderRepo:
         self.__repo_path = repo_path
 
         if self.__exercise_name is None:
-            raise Exception("Missing repository name")
+            raise GitAutograderInvalidStateException(
+                "Missing repository name",
+                self.__exercise_name,
+                self.__started_at,
+                self.is_local,
+            )
 
         # TODO Set this up to be more dynamic
         self.repo: Repo = (
@@ -101,7 +80,12 @@ class GitAutograderRepo:
             commits.append(commit)
 
         if len(commits) == 0:
-            raise Exception("No commits")
+            raise GitAutograderInvalidStateException(
+                f"Branch {branch} is missing any commits",
+                self.__exercise_name,
+                self.__started_at,
+                self.is_local,
+            )
 
         assert first_commit is not None
 
@@ -115,7 +99,12 @@ class GitAutograderRepo:
                 break
 
         if start_tag is None:
-            raise Exception("Missing start commit")
+            raise GitAutograderInvalidStateException(
+                f"Branch {branch} is missing the Git Mastery start commit",
+                self.__exercise_name,
+                self.__started_at,
+                self.is_local,
+            )
 
         return start_tag.commit
 
@@ -123,8 +112,7 @@ class GitAutograderRepo:
         """
         Retrieves only the user commits from a given branch.
 
-        Raises exceptions if the branch has no commits, start tag is not present, or if
-        there are no user commits available.
+        Raises exceptions if the branch has no commits or start tag is not present.
         """
         start_commit = self.start_commit(branch)
         commits = self.commits(branch)
@@ -134,15 +122,15 @@ class GitAutograderRepo:
 
         return user_commits
 
-    def save_as_output(
+    def to_output(
         self, comments: List[str], status: Optional[GitAutograderStatus] = None
     ) -> GitAutograderOutput:
         """
-        Saves the GitAutograderRepo as an output file.
+        Creates a GitAutograderOutput object.
 
         If there is no status provided, the status will be inferred from the comments.
         """
-        output = GitAutograderOutput(
+        return GitAutograderOutput(
             exercise_name=self.__exercise_name,
             started_at=self.__started_at,
             completed_at=self.__now(),
@@ -156,10 +144,6 @@ class GitAutograderRepo:
             if status is None
             else status,
         )
-        output.save()
-        if self.is_local:
-            print(output)
-        return output
 
     def has_non_empty_commits(self, branch: str = "main") -> bool:
         """Returns if a given branch has any non-empty commits."""

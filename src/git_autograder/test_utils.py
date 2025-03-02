@@ -6,7 +6,8 @@ from unittest import mock
 from git import Repo
 from repo_smith.initialize_repo import RepoInitializer, initialize_repo
 
-from git_autograder.repo import GitAutograderOutput, GitAutograderRepo
+from git_autograder.repo import GitAutograderRepo
+from git_autograder.output import GitAutograderOutput
 
 
 def attach_start_tag(repo_initializer: RepoInitializer, step_id: str) -> None:

@@ -1,6 +1,12 @@
 import os
-from src.git_autograder.answers_parser import GitAutograderAnswersParser
+
 import pytest
+
+from src.git_autograder.answers_parser import GitAutograderAnswersParser
+from src.git_autograder.exception import (
+    GitAutograderException,
+    GitAutograderInvalidStateException,
+)
 
 
 def get_path(filename: str) -> str:
@@ -11,7 +17,9 @@ def get_path(filename: str) -> str:
 
 def test_missing_answers():
     empty_path = os.getcwd()
-    with pytest.raises(Exception):
+    with pytest.raises(
+        (GitAutograderInvalidStateException, GitAutograderException, Exception)
+    ):
         GitAutograderAnswersParser(path=empty_path)
 
 
@@ -55,5 +63,7 @@ def test_multiline_answers():
 
 def test_invalid_answers():
     for i in range(1, 4):
-        with pytest.raises(Exception):
+        with pytest.raises(
+            (GitAutograderInvalidStateException, GitAutograderException, Exception)
+        ):
             GitAutograderAnswersParser(path=get_path(f"invalid_answers_{i}"))

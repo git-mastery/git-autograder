@@ -3,6 +3,8 @@ from io import TextIOWrapper
 from dataclasses import dataclass
 from typing import List, Tuple
 
+from git_autograder.exception import GitAutograderInvalidStateException
+
 
 @dataclass
 class GitAutograderAnswersRecord:
@@ -45,7 +47,12 @@ class GitAutograderAnswers:
 class GitAutograderAnswersParser:
     def __init__(self, path: str = "../answers.txt") -> None:
         if not os.path.isfile(path):
-            raise Exception("Missing answers.txt")
+            raise GitAutograderInvalidStateException(
+                "Missing answers.txt file from repository.",
+                exercise_name=None,
+                is_local=None,
+                started_at=None,
+            )
 
         with open(path, "r") as file:
             self.answers: GitAutograderAnswers = self.__parse(file)
@@ -79,8 +86,11 @@ class GitAutograderAnswersParser:
                 questions.append(self.__preserve_whitespace_join(acc_lines))
 
         if len(questions) != len(answers):
-            raise Exception(
-                "Invalid answers format: missing question(s) or answer(s) or both"
+            raise GitAutograderInvalidStateException(
+                "Invalid answers format: missing question(s) or answer(s) or both",
+                exercise_name=None,
+                is_local=None,
+                started_at=None,
             )
 
         return GitAutograderAnswers(questions=questions, answers=answers)
