@@ -77,6 +77,28 @@ class GitAutograderRepo:
             comments, self.__exercise_name, self.__started_at, self.is_local
         )
 
+    def track_remote_branches(self, remotes: List[str], strict: bool = False) -> None:
+        if self.is_local:
+            return
+
+        tracked = {"main"}
+        for remote in self.repo.remote("origin").refs:
+            for r in remotes:
+                if r not in tracked or f"origin/{r}" != remote.name:
+                    continue
+                tracked.add(r)
+                self.repo.git.checkout("-b", r, f"origin/{r}")
+                break
+
+        missed_remotes = list(set(remotes).difference(tracked))
+        if len(missed_remotes) > 0 and strict:
+            raise GitAutograderInvalidStateException(
+                f"Missing branches {', '.join(missed_remotes)} in submission",
+                self.__exercise_name,
+                self.__started_at,
+                self.is_local,
+            )
+
     def answers(self) -> GitAutograderAnswersParser:
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
         return (
