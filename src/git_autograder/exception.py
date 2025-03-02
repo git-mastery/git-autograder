@@ -1,9 +1,6 @@
 from datetime import datetime
 from typing import List, Optional, Union
 
-import pytz
-
-from git_autograder.output import GitAutograderOutput
 from git_autograder.status import GitAutograderStatus
 
 
