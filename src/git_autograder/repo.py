@@ -6,7 +6,7 @@ from enum import StrEnum
 from typing import ClassVar, List, Optional, Tuple
 
 import pytz
-from git import Commit, Head, Repo
+from git import Commit, Repo
 from git.diff import Lit_change_type
 
 from git_autograder.answers_parser import GitAutograderAnswersParser
@@ -131,9 +131,6 @@ class GitAutograderRepo:
         commits_asc = list(reversed(commits))
         start_commit_index = commits_asc.index(start_commit)
         user_commits = commits_asc[start_commit_index + 1 :]
-
-        if len(user_commits) == 0:
-            raise Exception("No user commits found")
 
         return user_commits
 
