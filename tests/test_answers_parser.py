@@ -67,3 +67,10 @@ def test_invalid_answers():
             (GitAutograderInvalidStateException, GitAutograderException, Exception)
         ):
             GitAutograderAnswersParser(path=get_path(f"invalid_answers_{i}"))
+
+
+def test_answer_as_list():
+    parser = GitAutograderAnswersParser(path=get_path("answers_list"))
+    answers = parser.answers[0].answer_as_list()
+    assert answers[0] == "Something"
+    assert answers[1] == "Else\nIs happening"

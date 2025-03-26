@@ -20,6 +20,20 @@ class GitAutograderAnswersRecord:
             question=tuple_value[0], answer=tuple_value[1]
         )
 
+    def answer_as_list(self) -> List[str]:
+        points: List[str] = []
+        acc = ""
+        for line in self.answer.split("\n"):
+            if line.startswith("-"):
+                if acc.strip() != "":
+                    points.append(acc.strip()[::])
+                acc = line[1:].strip() + "\n"
+            else:
+                acc += line + "\n"
+        if acc.strip() != "":
+            points.append(acc.strip()[::])
+        return points
+
 
 @dataclass
 class GitAutograderAnswers:
