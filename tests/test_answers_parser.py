@@ -74,3 +74,11 @@ def test_answer_as_list():
     answers = parser.answers[0].answer_as_list()
     assert answers[0] == "Something"
     assert answers[1] == "Else\nIs happening"
+
+
+def test_get_by_question():
+    parser = GitAutograderAnswersParser(path=get_path("single_line_answers"))
+    hello_answer = parser.answers.get_by_question("Hello")
+    assert parser.answers.get_by_question("Bye") is None
+    assert hello_answer is not None
+    assert hello_answer.answer == "World"

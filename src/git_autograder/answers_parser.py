@@ -1,7 +1,7 @@
 import os
 from io import TextIOWrapper
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from git_autograder.exception import GitAutograderInvalidStateException
 
@@ -56,6 +56,12 @@ class GitAutograderAnswers:
 
     def __len__(self) -> int:
         return len(self.questions)
+
+    def get_by_question(self, question: str) -> Optional[GitAutograderAnswersRecord]:
+        for i, q in enumerate(self.questions):
+            if question == q:
+                return GitAutograderAnswersRecord.from_tuple((q, self.answers[i]))
+        return None
 
 
 class GitAutograderAnswersParser:
