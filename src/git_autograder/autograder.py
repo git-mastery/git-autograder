@@ -42,7 +42,6 @@ def autograder() -> Callable[
                         "Missing exercise_name in environment", None, None, is_local
                     )
                 repo = GitAutograderRepo(is_local=is_local, exercise_name=exercise_name)
-                repo.start()
                 output = func(repo, *args, **kwargs)
             except (
                 GitAutograderInvalidStateException,
