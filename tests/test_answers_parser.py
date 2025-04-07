@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.git_autograder.answers_parser import GitAutograderAnswersParser
+from src.git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from src.git_autograder.exception import (
     GitAutograderException,
     GitAutograderInvalidStateException,

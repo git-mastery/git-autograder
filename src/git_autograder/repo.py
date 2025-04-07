@@ -6,7 +6,8 @@ from typing import List, Optional
 import pytz
 from git import Repo
 
-from git_autograder.answers_parser import GitAutograderAnswersParser
+from git_autograder.answers.answers import GitAutograderAnswers
+from git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from git_autograder.exception import (
     GitAutograderWrongAnswerException,
 )
@@ -48,6 +49,17 @@ class GitAutograderRepo:
         self.branches: BranchHelper = BranchHelper(self.ctx)
         self.commits: CommitHelper = CommitHelper(self.ctx)
         self.grader: GraderHelper = GraderHelper(self.ctx, self.branches, self.commits)
+        self.__answers_parser: Optional[GitAutograderAnswersParser] = None
+
+    @property
+    def answers(self) -> GitAutograderAnswers:
+        """Parses a QnA file (answers.txt). Verifies that the file exists."""
+        if self.__answers_parser is None:
+            answers_file_path = Path(self.__repo_path) / "answers.txt"
+            # Use singleton for answers parser
+            self.__answers_parser = GitAutograderAnswersParser(answers_file_path)
+
+        return self.__answers_parser.answers
 
     @staticmethod
     def __now() -> datetime:
@@ -79,16 +91,4 @@ class GitAutograderRepo:
     def wrong_answer(self, comments: List[str]) -> GitAutograderWrongAnswerException:
         return GitAutograderWrongAnswerException(
             comments, self.__exercise_name, self.__started_at, self.is_local
-        )
-
-    def answers(self) -> GitAutograderAnswersParser:
-        """Parses a QnA file (answers.txt). Verifies that the file exists."""
-        return (
-            GitAutograderAnswersParser(f"{self.__repo_path}/answers.txt")
-            if self.__repo_path is not None
-            else GitAutograderAnswersParser("../main/answers.txt")
-            if not self.is_local
-            else GitAutograderAnswersParser(
-                f"../exercises/{self.__exercise_name}/answers.txt"
-            )
         )

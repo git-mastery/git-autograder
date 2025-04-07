@@ -1,71 +1,13 @@
 import os
 from io import TextIOWrapper
-from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List
 
 from git_autograder.exception import GitAutograderInvalidStateException
-
-
-@dataclass
-class GitAutograderAnswersRecord:
-    question: str
-    answer: str
-
-    def as_tuple(self) -> Tuple[str, str]:
-        return self.question, self.answer
-
-    @staticmethod
-    def from_tuple(tuple_value: Tuple[str, str]) -> "GitAutograderAnswersRecord":
-        return GitAutograderAnswersRecord(
-            question=tuple_value[0], answer=tuple_value[1]
-        )
-
-    def answer_as_list(self) -> List[str]:
-        points: List[str] = []
-        acc = ""
-        for line in self.answer.split("\n"):
-            if line.startswith("-"):
-                if acc.strip() != "":
-                    points.append(acc.strip()[::])
-                acc = line[1:].strip() + "\n"
-            else:
-                acc += line + "\n"
-        if acc.strip() != "":
-            points.append(acc.strip()[::])
-        return points
-
-
-@dataclass
-class GitAutograderAnswers:
-    questions: List[str]
-    answers: List[str]
-
-    @property
-    def qna(self) -> List[GitAutograderAnswersRecord]:
-        return list(
-            map(
-                lambda a: GitAutograderAnswersRecord.from_tuple(a),
-                zip(self.questions, self.answers),
-            )
-        )
-
-    def __getitem__(self, key: int) -> GitAutograderAnswersRecord:
-        question = self.questions[key]
-        answer = self.answers[key]
-        return GitAutograderAnswersRecord.from_tuple((question, answer))
-
-    def __len__(self) -> int:
-        return len(self.questions)
-
-    def get_by_question(self, question: str) -> Optional[GitAutograderAnswersRecord]:
-        for i, q in enumerate(self.questions):
-            if question == q:
-                return GitAutograderAnswersRecord.from_tuple((q, self.answers[i]))
-        return None
+from git_autograder.answers.answers import GitAutograderAnswers
 
 
 class GitAutograderAnswersParser:
-    def __init__(self, path: str = "../answers.txt") -> None:
+    def __init__(self, path: str | os.PathLike[str]) -> None:
         if not os.path.isfile(path):
             raise GitAutograderInvalidStateException(
                 "Missing answers.txt file from repository.",
