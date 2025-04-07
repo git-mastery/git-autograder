@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple
 import pytz
 from git import Commit, Repo
 from git.diff import Lit_change_type
+from pathlib import Path
 
 from git_autograder.answers_parser import GitAutograderAnswersParser
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
@@ -19,31 +20,24 @@ from git_autograder.output import GitAutograderOutput
 class GitAutograderRepo:
     def __init__(
         self,
+        is_local: bool,
+        exercise_name: str,
         repo_path: Optional[str | os.PathLike] = None,
     ) -> None:
-        self.__started_at = self.__now()
-        self.is_local: bool = os.environ.get("is_local", "false") == "true"
-        self.__exercise_name = os.environ.get("repository_name")
-        self.__repo_path = repo_path
-
-        if self.__exercise_name is None:
-            raise GitAutograderInvalidStateException(
-                "Missing repository name",
-                self.__exercise_name,
-                self.__started_at,
-                self.is_local,
-            )
-
-        # TODO Set this up to be more dynamic
-        self.repo: Repo = (
-            Repo(self.__repo_path)
-            if self.__repo_path is not None
-            else (
-                Repo("../main")
-                if not self.is_local
-                else Repo(f"../exercises/{self.__exercise_name}")
-            )
+        self.is_local: bool = is_local
+        self.__exercise_name = exercise_name
+        self.__repo_path = (
+            repo_path
+            if repo_path is not None
+            else Path.cwd().parent / "main"
+            if not is_local
+            else Path.cwd().parent / "exercises" / exercise_name
         )
+
+        self.repo: Repo = Repo(self.__repo_path)
+
+    def start(self) -> None:
+        self.__started_at = self.__now()
 
     @staticmethod
     def __now() -> datetime:

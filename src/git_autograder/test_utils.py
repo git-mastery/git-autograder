@@ -34,6 +34,7 @@ def set_env(**kwargs) -> mock._patch_dict:
 
 @contextmanager
 def setup_autograder(
+    exercise_name: str,
     spec_path: str,
     step_id: str,
     grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
@@ -45,7 +46,9 @@ def setup_autograder(
         setup(r)
         output: Optional[GitAutograderOutput] = None
         try:
-            autograder = GitAutograderRepo(repo_path=r.working_dir)
+            autograder = GitAutograderRepo(
+                is_local=False, exercise_name=exercise_name, repo_path=r.working_dir
+            )
             output = grade_func(autograder)
         except (
             GitAutograderInvalidStateException,

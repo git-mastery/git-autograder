@@ -1,5 +1,6 @@
 import functools
 from datetime import datetime
+import os
 from typing import Callable
 
 import pytz
@@ -34,7 +35,14 @@ def autograder() -> Callable[
         def wrapper(*args, **kwargs) -> GitAutograderOutput:
             output = None
             try:
-                repo = GitAutograderRepo()
+                is_local = os.environ.get("is_local", "false") == "true"
+                exercise_name = os.environ.get("exercise_name")
+                if exercise_name is None:
+                    raise GitAutograderInvalidStateException(
+                        "Missing exercise_name in environment", None, None, is_local
+                    )
+                repo = GitAutograderRepo(is_local=is_local, exercise_name=exercise_name)
+                repo.start()
                 output = func(repo, *args, **kwargs)
             except (
                 GitAutograderInvalidStateException,
