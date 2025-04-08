@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional, Union
 
-from git_autograder.status import GitAutograderStatus
+from git_autograder import GitAutograderStatus
 
 
 class GitAutograderException(Exception):

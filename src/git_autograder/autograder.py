@@ -1,17 +1,15 @@
 import functools
-from datetime import datetime
 import os
+from datetime import datetime
 from typing import Callable
 
 import pytz
 
+from git_autograder import GitAutograderOutput, GitAutograderRepo, GitAutograderStatus
 from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
-from git_autograder.output import GitAutograderOutput
-from git_autograder.repo import GitAutograderRepo
-from git_autograder.status import GitAutograderStatus
 
 
 def autograder() -> Callable[
