@@ -1,11 +1,11 @@
 from typing import List
 
 from git_autograder.exception import GitAutograderInvalidStateException
-from git_autograder.repo_context import GitAutograderRepoContext
+from git_autograder.repo import GitAutograderRepo
 
 
 class BranchHelper:
-    def __init__(self, ctx: GitAutograderRepoContext) -> None:
+    def __init__(self, ctx: GitAutograderRepo.Context) -> None:
         self.ctx = ctx
 
     def track_remote_branches(self, remotes: List[str], strict: bool = False) -> None:

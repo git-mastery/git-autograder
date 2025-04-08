@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import os
 from datetime import datetime
 from pathlib import Path
@@ -16,11 +17,18 @@ from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.grader_helper import GraderHelper
 from git_autograder.output import GitAutograderOutput
-from git_autograder.repo_context import GitAutograderRepoContext
 from git_autograder.status import GitAutograderStatus
 
 
 class GitAutograderRepo:
+    @dataclass
+    class Context:
+        repo: "GitAutograderRepo"
+        is_local: bool
+        exercise_name: str
+        started_at: datetime
+        repo_path: Optional[str | os.PathLike] = None
+
     def __init__(
         self,
         is_local: bool,
@@ -40,7 +48,7 @@ class GitAutograderRepo:
         )
 
         self.repo: Repo = Repo(self.__repo_path)
-        self.ctx = GitAutograderRepoContext(
+        self.ctx = self.Context(
             repo=self,
             started_at=self.__started_at,
             is_local=self.is_local,

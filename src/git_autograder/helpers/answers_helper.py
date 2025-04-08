@@ -6,12 +6,12 @@ from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
-from git_autograder.repo_context import GitAutograderRepoContext
+from git_autograder.repo import GitAutograderRepo
 
 
 class AnswersHelper:
     def __init__(
-        self, ctx: GitAutograderRepoContext, answers: GitAutograderAnswers
+        self, ctx: GitAutograderRepo.Context, answers: GitAutograderAnswers
     ) -> None:
         self.ctx = ctx
         self.answers = answers

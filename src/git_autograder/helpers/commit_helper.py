@@ -3,11 +3,11 @@ from typing import List
 from git import Commit
 
 from git_autograder.exception import GitAutograderInvalidStateException
-from git_autograder.repo_context import GitAutograderRepoContext
+from git_autograder.repo import GitAutograderRepo
 
 
 class CommitHelper:
-    def __init__(self, ctx: GitAutograderRepoContext) -> None:
+    def __init__(self, ctx: GitAutograderRepo.Context) -> None:
         self.ctx = ctx
 
     def is_child_commit(self, child: Commit, parent: Commit) -> bool:

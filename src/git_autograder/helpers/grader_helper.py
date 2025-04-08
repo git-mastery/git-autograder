@@ -6,13 +6,13 @@ from git.diff import Lit_change_type
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
-from git_autograder.repo_context import GitAutograderRepoContext
+from git_autograder.repo import GitAutograderRepo
 
 
 class GraderHelper:
     def __init__(
         self,
-        ctx: GitAutograderRepoContext,
+        ctx: GitAutograderRepo.Context,
         branch_helper: BranchHelper,
         commit_helper: CommitHelper,
     ) -> None:
