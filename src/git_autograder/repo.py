@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -12,10 +12,6 @@ from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
-from git_autograder.helpers.answers_helper import AnswersHelper
-from git_autograder.helpers.branch_helper import BranchHelper
-from git_autograder.helpers.commit_helper import CommitHelper
-from git_autograder.helpers.grader_helper import GraderHelper
 from git_autograder.output import GitAutograderOutput
 from git_autograder.status import GitAutograderStatus
 
@@ -55,14 +51,25 @@ class GitAutograderRepo:
             repo_path=self.__repo_path,
             exercise_name=self.__exercise_name,
         )
+
+        # Doing this to break the cyclic dependency
+        from git_autograder.helpers.answers_helper import AnswersHelper
+        from git_autograder.helpers.branch_helper import BranchHelper
+        from git_autograder.helpers.commit_helper import CommitHelper
+        from git_autograder.helpers.grader_helper import GraderHelper
+
         self.branches: BranchHelper = BranchHelper(self.ctx)
         self.commits: CommitHelper = CommitHelper(self.ctx)
         self.grader: GraderHelper = GraderHelper(self.ctx, self.branches, self.commits)
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
         self.__answers: Optional[AnswersHelper] = None
 
+    from git_autograder.helpers.answers_helper import AnswersHelper
+
     @property
     def answers(self) -> AnswersHelper:
+        from git_autograder.helpers.answers_helper import AnswersHelper
+
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
         # We need to use singleton patterns here since we want to avoid repeatedly parsing
         # These are all optional to start since the grader might not require answers
