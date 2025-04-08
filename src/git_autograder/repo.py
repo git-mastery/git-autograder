@@ -6,17 +6,16 @@ from typing import List, Optional
 import pytz
 from git import Repo
 
-from git_autograder.answers.answers import GitAutograderAnswers
+from git_autograder import GitAutograderOutput, GitAutograderStatus
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from git_autograder.exception import (
     GitAutograderWrongAnswerException,
 )
+from git_autograder.helpers.answers_helper import AnswersHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.grader_helper import GraderHelper
-from git_autograder.output import GitAutograderOutput
 from git_autograder.repo_context import GitAutograderRepoContext
-from git_autograder.status import GitAutograderStatus
 
 
 class GitAutograderRepo:
@@ -50,16 +49,22 @@ class GitAutograderRepo:
         self.commits: CommitHelper = CommitHelper(self.ctx)
         self.grader: GraderHelper = GraderHelper(self.ctx, self.branches, self.commits)
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
+        self.__answers: Optional[AnswersHelper] = None
 
     @property
-    def answers(self) -> GitAutograderAnswers:
+    def answers(self) -> AnswersHelper:
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
+        # We need to use singleton patterns here since we want to avoid repeatedly parsing
+        # These are all optional to start since the grader might not require answers
         if self.__answers_parser is None:
             answers_file_path = Path(self.__repo_path) / "answers.txt"
             # Use singleton for answers parser
             self.__answers_parser = GitAutograderAnswersParser(answers_file_path)
 
-        return self.__answers_parser.answers
+        if self.__answers is None:
+            self.__answers = AnswersHelper(self.ctx, self.__answers_parser.answers)
+
+        return self.__answers
 
     @staticmethod
     def __now() -> datetime:
