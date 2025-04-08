@@ -1,6 +1,6 @@
+from datetime import datetime
 from json import JSONEncoder
 from typing import Any
-from datetime import datetime
 
 
 class Encoder(JSONEncoder):

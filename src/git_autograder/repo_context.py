@@ -1,8 +1,9 @@
+import os
 from dataclasses import dataclass
 from datetime import datetime
-import os
 from typing import Optional
-from git_autograder import GitAutograderRepo
+
+from git_autograder.repo import GitAutograderRepo
 
 
 @dataclass

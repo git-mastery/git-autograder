@@ -4,8 +4,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import ClassVar, List, Optional
 
-from git_autograder import GitAutograderStatus
 from git_autograder.encoder import Encoder
+from git_autograder.status import GitAutograderStatus
 
 
 @dataclass

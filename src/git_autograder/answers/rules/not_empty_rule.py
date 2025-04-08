@@ -1,5 +1,5 @@
 from git_autograder.answers.answers_record import GitAutograderAnswersRecord
-from git_autograder.answers.rules import AnswerRule
+from git_autograder.answers.rules.answer_rule import AnswerRule
 
 
 class NotEmptyRule(AnswerRule):

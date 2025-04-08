@@ -1,6 +1,7 @@
 from typing import List
 
 from git import Commit
+
 from git_autograder.exception import GitAutograderInvalidStateException
 from git_autograder.repo_context import GitAutograderRepoContext
 

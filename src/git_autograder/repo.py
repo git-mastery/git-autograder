@@ -6,7 +6,6 @@ from typing import List, Optional
 import pytz
 from git import Repo
 
-from git_autograder import GitAutograderOutput, GitAutograderStatus
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from git_autograder.exception import (
     GitAutograderInvalidStateException,
@@ -16,7 +15,9 @@ from git_autograder.helpers.answers_helper import AnswersHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.grader_helper import GraderHelper
+from git_autograder.output import GitAutograderOutput
 from git_autograder.repo_context import GitAutograderRepoContext
+from git_autograder.status import GitAutograderStatus
 
 
 class GitAutograderRepo:

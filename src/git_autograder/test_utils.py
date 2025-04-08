@@ -8,11 +8,13 @@ import pytz
 from git import Repo
 from repo_smith.initialize_repo import RepoInitializer, initialize_repo
 
-from git_autograder import GitAutograderOutput, GitAutograderRepo, GitAutograderStatus
 from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
+from git_autograder.output import GitAutograderOutput
+from git_autograder.repo import GitAutograderRepo
+from git_autograder.status import GitAutograderStatus
 
 
 def attach_start_tag(repo_initializer: RepoInitializer, step_id: str) -> None:

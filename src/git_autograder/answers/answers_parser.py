@@ -2,7 +2,6 @@ import os
 from io import TextIOWrapper
 from typing import List
 
-from git_autograder.exception import GitAutograderInvalidStateException
 from git_autograder.answers.answers import GitAutograderAnswers
 
 
