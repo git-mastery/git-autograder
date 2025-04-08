@@ -34,34 +34,47 @@ def autograder() -> Callable[
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> GitAutograderOutput:
             output = None
+            is_local = os.environ.get("is_local", "false") == "true"
+
+            exercise_name = os.environ.get("exercise_name")
+            if exercise_name is None:
+                output = GitAutograderOutput(
+                    exercise_name=None,
+                    started_at=None,
+                    completed_at=None,
+                    is_local=is_local,
+                    comments=["Missing exercise_name in environment"],
+                    status=GitAutograderStatus.ERROR,
+                )
+                output.save()
+                return output
+
+            repo = GitAutograderRepo(is_local=is_local, exercise_name=exercise_name)
             try:
-                is_local = os.environ.get("is_local", "false") == "true"
-                exercise_name = os.environ.get("exercise_name")
-                if exercise_name is None:
-                    raise GitAutograderInvalidStateException(
-                        "Missing exercise_name in environment", None, None, is_local
-                    )
-                repo = GitAutograderRepo(is_local=is_local, exercise_name=exercise_name)
                 output = func(repo, *args, **kwargs)
             except (
                 GitAutograderInvalidStateException,
                 GitAutograderWrongAnswerException,
             ) as e:
                 output = GitAutograderOutput(
-                    exercise_name=e.exercise_name,
-                    started_at=e.started_at,
+                    exercise_name=repo.exercise_name,
+                    started_at=repo.started_at,
                     completed_at=datetime.now(tz=pytz.UTC),
-                    is_local=e.is_local,
+                    is_local=repo.is_local,
                     comments=[e.message] if isinstance(e.message, str) else e.message,
-                    status=e.status,
+                    status=(
+                        GitAutograderStatus.ERROR
+                        if isinstance(e, GitAutograderInvalidStateException)
+                        else GitAutograderStatus.UNSUCCESSFUL
+                    ),
                 )
             except Exception as e:
                 # Unexpected exception
                 output = GitAutograderOutput(
-                    exercise_name=None,
+                    exercise_name=exercise_name,
                     started_at=None,
                     completed_at=None,
-                    is_local=None,
+                    is_local=is_local,
                     comments=[str(e)],
                     status=GitAutograderStatus.ERROR,
                 )

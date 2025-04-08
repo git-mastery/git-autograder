@@ -45,9 +45,10 @@ def setup_autograder(
     with repo_initializer.initialize() as r:
         setup(r)
         output: Optional[GitAutograderOutput] = None
+        started_at = datetime.now(tz=pytz.UTC)
         try:
             autograder = GitAutograderRepo(
-                is_local=False, exercise_name=exercise_name, repo_path=r.working_dir
+                is_local=True, exercise_name=exercise_name, repo_path=r.working_dir
             )
             output = grade_func(autograder)
         except (
@@ -55,20 +56,24 @@ def setup_autograder(
             GitAutograderWrongAnswerException,
         ) as e:
             output = GitAutograderOutput(
-                exercise_name=e.exercise_name,
-                started_at=e.started_at,
+                exercise_name=exercise_name,
+                started_at=started_at,
                 completed_at=datetime.now(tz=pytz.UTC),
-                is_local=e.is_local,
+                is_local=True,
                 comments=[e.message] if isinstance(e.message, str) else e.message,
-                status=e.status,
+                status=(
+                    GitAutograderStatus.ERROR
+                    if isinstance(e, GitAutograderInvalidStateException)
+                    else GitAutograderStatus.UNSUCCESSFUL
+                ),
             )
         except Exception as e:
             # Unexpected exception
             output = GitAutograderOutput(
-                exercise_name=None,
+                exercise_name=exercise_name,
                 started_at=None,
                 completed_at=None,
-                is_local=None,
+                is_local=True,
                 comments=[str(e)],
                 status=GitAutograderStatus.ERROR,
             )

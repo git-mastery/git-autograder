@@ -1,22 +1,21 @@
 from typing import List, Optional, Tuple
 
-from git import Commit
+from git import Commit, Repo
 from git.diff import Lit_change_type
 
 from git_autograder.diff import GitAutograderDiff, GitAutograderDiffHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
-from git_autograder.repo import GitAutograderRepo
 
 
 class GraderHelper:
     def __init__(
         self,
-        ctx: GitAutograderRepo.Context,
+        repo: Repo,
         branch_helper: BranchHelper,
         commit_helper: CommitHelper,
     ) -> None:
-        self.ctx = ctx
+        self.repo = repo
         self.branch_helper = branch_helper
         self.commit_helper = commit_helper
 

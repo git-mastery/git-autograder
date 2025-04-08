@@ -1,14 +1,14 @@
 from typing import List
 
-from git import Commit
+from git import Commit, Repo
 
 from git_autograder.exception import GitAutograderInvalidStateException
 from git_autograder.repo import GitAutograderRepo
 
 
 class CommitHelper:
-    def __init__(self, ctx: GitAutograderRepo.Context) -> None:
-        self.ctx = ctx
+    def __init__(self, repo: Repo) -> None:
+        self.repo = repo
 
     def is_child_commit(self, child: Commit, parent: Commit) -> bool:
         if child == parent:
@@ -23,7 +23,7 @@ class CommitHelper:
     def commits(self, branch: str = "main") -> List[Commit]:
         """Retrieve the available commits of a given branch."""
         commits = []
-        for commit in self.ctx.repo.repo.iter_commits(branch):
+        for commit in self.repo.iter_commits(branch):
             commits.append(commit)
 
         return commits
@@ -40,9 +40,6 @@ class CommitHelper:
         if len(commits) == 0:
             raise GitAutograderInvalidStateException(
                 f"Branch {branch} is missing any commits",
-                self.ctx.exercise_name,
-                self.ctx.started_at,
-                self.ctx.is_local,
             )
 
         first_commit = commits[-1]
@@ -51,7 +48,7 @@ class CommitHelper:
         start_tag_name = f"git-mastery-start-{first_commit_hash[:7]}"
 
         start_tag = None
-        for tag in self.ctx.repo.repo.tags:
+        for tag in self.repo.tags:
             if str(tag) == start_tag_name:
                 start_tag = tag
                 break
@@ -59,9 +56,6 @@ class CommitHelper:
         if start_tag is None:
             raise GitAutograderInvalidStateException(
                 f"Branch {branch} is missing the Git Mastery start commit",
-                self.ctx.exercise_name,
-                self.ctx.started_at,
-                self.ctx.is_local,
             )
 
         return start_tag.commit
