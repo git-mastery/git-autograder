@@ -9,6 +9,7 @@ from git import Repo
 from git_autograder import GitAutograderOutput, GitAutograderStatus
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from git_autograder.exception import (
+    GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
 from git_autograder.helpers.answers_helper import AnswersHelper
@@ -59,7 +60,15 @@ class GitAutograderRepo:
         if self.__answers_parser is None:
             answers_file_path = Path(self.__repo_path) / "answers.txt"
             # Use singleton for answers parser
-            self.__answers_parser = GitAutograderAnswersParser(answers_file_path)
+            try:
+                self.__answers_parser = GitAutograderAnswersParser(answers_file_path)
+            except Exception as e:
+                raise GitAutograderInvalidStateException(
+                    str(e),
+                    exercise_name=self.__exercise_name,
+                    is_local=self.is_local,
+                    started_at=self.__started_at,
+                )
 
         if self.__answers is None:
             self.__answers = AnswersHelper(self.ctx, self.__answers_parser.answers)

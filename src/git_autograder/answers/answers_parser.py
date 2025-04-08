@@ -9,12 +9,7 @@ from git_autograder.answers.answers import GitAutograderAnswers
 class GitAutograderAnswersParser:
     def __init__(self, path: str | os.PathLike[str]) -> None:
         if not os.path.isfile(path):
-            raise GitAutograderInvalidStateException(
-                "Missing answers.txt file from repository.",
-                exercise_name=None,
-                is_local=None,
-                started_at=None,
-            )
+            raise Exception("Missing answers.txt file from repository.")
 
         with open(path, "r") as file:
             self.answers: GitAutograderAnswers = self.__parse(file)
@@ -48,11 +43,8 @@ class GitAutograderAnswersParser:
                 questions.append(self.__preserve_whitespace_join(acc_lines))
 
         if len(questions) != len(answers):
-            raise GitAutograderInvalidStateException(
-                "Invalid answers format: missing question(s) or answer(s) or both",
-                exercise_name=None,
-                is_local=None,
-                started_at=None,
+            raise Exception(
+                "Invalid answers format: missing question(s) or answer(s) or both"
             )
 
         return GitAutograderAnswers(questions=questions, answers=answers)
