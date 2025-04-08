@@ -3,7 +3,6 @@ from typing import List
 from git import Commit, Repo
 
 from git_autograder.exception import GitAutograderInvalidStateException
-from git_autograder.repo import GitAutograderRepo
 
 
 class CommitHelper:
