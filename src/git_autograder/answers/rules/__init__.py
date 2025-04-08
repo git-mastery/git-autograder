@@ -5,6 +5,7 @@ from git_autograder.answers.rules.has_exact_list_rule import HasExactListRule
 from git_autograder.answers.rules.contains_list_rule import ContainsListRule
 
 __all__ = [
+    "AnswerRule",
     "HasExactValueRule",
     "NotEmptyRule",
     "HasExactListRule",
