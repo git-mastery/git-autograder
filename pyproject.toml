@@ -27,3 +27,5 @@ Issues = "https://github.com/git-mastery/git-autograder/issues"
 addopts = ["--import-mode=importlib"]
 pythonpath = ["src"]
 
+[tool.mypy]
+mypy_path = "src"
