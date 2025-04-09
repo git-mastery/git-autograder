@@ -38,12 +38,13 @@ def setup_autograder(
     spec_path: str,
     step_id: str,
     grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
-    setup: Callable[[Repo], None],
+    setup: Optional[Callable[[Repo], None]] = None,
 ) -> Iterator[GitAutograderOutput]:
     repo_initializer = initialize_repo(spec_path)
     attach_start_tag(repo_initializer, step_id)
     with repo_initializer.initialize() as r:
-        setup(r)
+        if setup is not None:
+            setup(r)
         output: Optional[GitAutograderOutput] = None
         started_at = datetime.now(tz=pytz.UTC)
         try:
