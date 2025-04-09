@@ -16,6 +16,7 @@ from git_autograder.helpers.answers_helper import AnswersHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.grader_helper import GraderHelper
+from git_autograder.helpers.remote_helper import RemoteHelper
 from git_autograder.output import GitAutograderOutput
 from git_autograder.status import GitAutograderStatus
 
@@ -40,9 +41,10 @@ class GitAutograderRepo:
         )
 
         self.repo: Repo = Repo(self.repo_path)
-        # Doing this to break the cyclic dependency
+
         self.branches: BranchHelper = BranchHelper(self.repo)
         self.commits: CommitHelper = CommitHelper(self.repo)
+        self.remotes: RemoteHelper = RemoteHelper(self.repo)
         self.grader: GraderHelper = GraderHelper(self.repo, self.branches, self.commits)
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
         self.__answers: Optional[AnswersHelper] = None
