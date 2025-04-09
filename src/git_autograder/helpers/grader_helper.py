@@ -15,6 +15,7 @@ class GraderHelper:
         branch_helper: BranchHelper,
         commit_helper: CommitHelper,
     ) -> None:
+        """General autograder behavior that combines the behavior across Git objects."""
         self.repo = repo
         self.branch_helper = branch_helper
         self.commit_helper = commit_helper

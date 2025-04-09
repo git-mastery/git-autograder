@@ -9,13 +9,13 @@ class CommitHelper:
     def __init__(self, repo: Repo) -> None:
         self.repo = repo
 
-    def is_child_commit(self, child: Commit, parent: Commit) -> bool:
+    def is_child(self, child: Commit, parent: Commit) -> bool:
         if child == parent:
             return True
 
         res = False
-        for parent in child.parents:
-            res |= self.is_child_commit(parent, parent)
+        for child_parent in child.parents:
+            res |= self.is_child(child_parent, parent)
 
         return res
 
