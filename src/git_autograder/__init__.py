@@ -7,7 +7,7 @@ __all__ = [
     "GitAutograderOutput",
 ]
 
-from .autograder import autograder
+from .decorators import autograder
 from .test_utils import setup_autograder, set_env
 from .repo import GitAutograderRepo
 from .status import GitAutograderStatus
