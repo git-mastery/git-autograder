@@ -1,7 +1,7 @@
 import os
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Callable, Iterator, Optional
+from typing import Callable, Iterator, List, Optional
 from unittest import mock
 
 import pytz
@@ -81,3 +81,14 @@ def setup_autograder(
 
         assert output is not None
         yield output
+
+
+def assert_output(
+    output: GitAutograderOutput,
+    expected_status: GitAutograderStatus,
+    expected_comments: List[str] = [],
+) -> None:
+    assert output.status == expected_status
+    assert len(set(output.comments or []) & set(expected_comments)) == len(
+        expected_comments
+    )
