@@ -18,7 +18,7 @@ class BranchHelper:
                 return GitAutograderBranch(head)
         return None
 
-    def branch(self, branch_name: str) -> Optional[GitAutograderBranch]:
+    def branch(self, branch_name: str) -> GitAutograderBranch:
         b = self.branch_or_none(branch_name)
         if b is None:
             raise GitAutograderInvalidStateException(
