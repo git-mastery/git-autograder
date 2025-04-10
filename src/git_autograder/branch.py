@@ -1,10 +1,10 @@
-from typing import List
+from typing import Any, List
 
 from git import Head
 
 from git_autograder.commit import GitAutograderCommit
-from git_autograder.exception import GitAutograderInvalidStateException
 from git_autograder.diff import GitAutograderDiffHelper
+from git_autograder.exception import GitAutograderInvalidStateException
 
 
 class GitAutograderBranch:
@@ -13,6 +13,11 @@ class GitAutograderBranch:
 
     def __init__(self, branch: Head) -> None:
         self.branch = branch
+
+    def __eq__(self, value: Any) -> bool:
+        if not isinstance(value, GitAutograderBranch):
+            return False
+        return value.branch == self.branch
 
     @property
     def name(self) -> str:

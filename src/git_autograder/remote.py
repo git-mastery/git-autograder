@@ -1,10 +1,16 @@
-from typing import List
+from typing import Any, List
+
 from git import Remote
 
 
 class GitAutograderRemote:
     def __init__(self, remote: Remote) -> None:
         self.remote = remote
+
+    def __eq__(self, value: Any) -> bool:
+        if not isinstance(value, GitAutograderRemote):
+            return False
+        return value.remote == self.remote
 
     def track_branches(self, branches: List[str]) -> None:
         # We start with filtering main because it should be the default branch that

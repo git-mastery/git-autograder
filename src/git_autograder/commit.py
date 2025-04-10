@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 from git import Commit, Stats
 
@@ -6,6 +6,11 @@ from git import Commit, Stats
 class GitAutograderCommit:
     def __init__(self, commit: Commit) -> None:
         self.commit = commit
+
+    def __eq__(self, value: Any) -> bool:
+        if not isinstance(value, GitAutograderCommit):
+            return False
+        return value.commit == self.commit
 
     @property
     def hexsha(self) -> str:
