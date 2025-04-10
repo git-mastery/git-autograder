@@ -56,6 +56,7 @@ def setup_autograder(
             GitAutograderInvalidStateException,
             GitAutograderWrongAnswerException,
         ) as e:
+            print(e)
             output = GitAutograderOutput(
                 exercise_name=exercise_name,
                 started_at=started_at,
@@ -69,6 +70,7 @@ def setup_autograder(
                 ),
             )
         except Exception as e:
+            print(e)
             # Unexpected exception
             output = GitAutograderOutput(
                 exercise_name=exercise_name,
