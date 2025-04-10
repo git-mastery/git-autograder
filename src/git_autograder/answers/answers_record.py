@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import List, Tuple
 
+from git_autograder.answers.rules.answer_rule import AnswerRule
+from git_autograder.exception import GitAutograderWrongAnswerException
+
 
 @dataclass
 class GitAutograderAnswersRecord:
@@ -29,3 +32,15 @@ class GitAutograderAnswersRecord:
         if acc.strip() != "":
             points.append(acc.strip()[::])
         return points
+
+    def validate(self, rules: List[AnswerRule]) -> None:
+        """
+        Validates that a given GitAutograderAnswersRecord passes a set of rules.
+
+        :raises GitAutograderWrongAnswerException: when a rule is violated.
+        """
+        for rule in rules:
+            try:
+                rule.apply(self)
+            except Exception as e:
+                raise GitAutograderWrongAnswerException([str(e)])

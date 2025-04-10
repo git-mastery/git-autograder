@@ -7,15 +7,14 @@ from typing import List, Optional
 import pytz
 from git import Repo
 
+from git_autograder.answers.answers import GitAutograderAnswers
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
 from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
-from git_autograder.helpers.answers_helper import AnswersHelper
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
-from git_autograder.helpers.grader_helper import GraderHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
 from git_autograder.output import GitAutograderOutput
 from git_autograder.status import GitAutograderStatus
@@ -28,7 +27,8 @@ class GitAutograderRepo:
         exercise_name: str,
         repo_path: Optional[str | os.PathLike] = None,
     ) -> None:
-        # TODO: We should not be starting the grading at the point of initializing, but we're keeping this because of the exception system
+        # TODO: We should not be starting the grading at the point of initializing, but
+        # we're keeping this because of the exception system
         self.started_at = self.__now()
         self.is_local: bool = is_local
         self.exercise_name = exercise_name
@@ -45,12 +45,11 @@ class GitAutograderRepo:
         self.branches: BranchHelper = BranchHelper(self.repo)
         self.commits: CommitHelper = CommitHelper(self.repo)
         self.remotes: RemoteHelper = RemoteHelper(self.repo)
-        self.grader: GraderHelper = GraderHelper(self.repo, self.branches, self.commits)
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
-        self.__answers: Optional[AnswersHelper] = None
+        self.__answers: Optional[GitAutograderAnswers] = None
 
     @property
-    def answers(self) -> AnswersHelper:
+    def answers(self) -> GitAutograderAnswers:
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
         # We need to use singleton patterns here since we want to avoid repeatedly parsing
         # These are all optional to start since the grader might not require answers
@@ -65,7 +64,7 @@ class GitAutograderRepo:
                 )
 
         if self.__answers is None:
-            self.__answers = AnswersHelper(self.repo, self.__answers_parser.answers)
+            self.__answers = self.__answers_parser.answers
 
         return self.__answers
 

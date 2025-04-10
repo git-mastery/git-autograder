@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import Iterator, Optional
+from typing import Optional
 
 from difflib_parser.difflib_parser import DiffParser
-from git import Commit, DiffIndex
 from git.diff import Diff, Lit_change_type
 
 

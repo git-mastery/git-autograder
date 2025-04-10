@@ -1,16 +1,18 @@
 from typing import Optional
 
-from git import Head, Repo
+from git import Repo
+
+from git_autograder.branch import GitAutograderBranch
 
 
 class BranchHelper:
     def __init__(self, repo: Repo) -> None:
         self.repo = repo
 
-    def branch(self, branch_name: str) -> Optional[Head]:
+    def branch(self, branch_name: str) -> Optional[GitAutograderBranch]:
         for head in self.repo.heads:
             if head.name == branch_name:
-                return head
+                return GitAutograderBranch(head)
         return None
 
     def has_branch(self, branch_name: str) -> bool:

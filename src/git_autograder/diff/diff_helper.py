@@ -1,15 +1,22 @@
-from typing import Iterator
+from typing import Iterator, Union
 
 from difflib_parser.difflib_parser import DiffParser
 from git import Commit, Diff, DiffIndex
 from git.diff import Lit_change_type
 
+from git_autograder.commit import GitAutograderCommit
 from git_autograder.diff.diff import GitAutograderDiff
 
 
 class GitAutograderDiffHelper:
-    def __init__(self, a: Commit, b: Commit) -> None:
-        self.diff_index: DiffIndex[Diff] = a.diff(b)
+    def __init__(
+        self,
+        a: Union[Commit, GitAutograderCommit],
+        b: Union[Commit, GitAutograderCommit],
+    ) -> None:
+        a_commit = a if isinstance(a, Commit) else a.commit
+        b_commit = b if isinstance(b, Commit) else b.commit
+        self.diff_index: DiffIndex[Diff] = a_commit.diff(b_commit)
 
     def iter_changes(self, change_type: Lit_change_type) -> Iterator[GitAutograderDiff]:
         for change in self.diff_index.iter_change_type(change_type):
