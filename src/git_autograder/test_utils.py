@@ -32,6 +32,67 @@ def set_env(**kwargs) -> mock._patch_dict:
     return mock.patch.dict(os.environ, kwargs, clear=True)
 
 
+class GitAutograderTestLoader:
+    def __init__(
+        self,
+        exercise_name: str,
+        grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
+    ) -> None:
+        self.exercise_name = exercise_name
+        self.grade_func = grade_func
+
+    @contextmanager
+    def load(
+        self,
+        spec_path: str,
+        step_id: str,
+        setup: Optional[Callable[[Repo], None]] = None,
+    ) -> Iterator[GitAutograderOutput]:
+        repo_initializer = initialize_repo(spec_path)
+        attach_start_tag(repo_initializer, step_id)
+        with repo_initializer.initialize() as r:
+            if setup is not None:
+                setup(r)
+            output: Optional[GitAutograderOutput] = None
+            started_at = datetime.now(tz=pytz.UTC)
+            try:
+                autograder = GitAutograderRepo(
+                    is_local=True,
+                    exercise_name=self.exercise_name,
+                    repo_path=r.working_dir,
+                )
+                output = self.grade_func(autograder)
+            except (
+                GitAutograderInvalidStateException,
+                GitAutograderWrongAnswerException,
+            ) as e:
+                output = GitAutograderOutput(
+                    exercise_name=self.exercise_name,
+                    started_at=started_at,
+                    completed_at=datetime.now(tz=pytz.UTC),
+                    is_local=True,
+                    comments=[e.message] if isinstance(e.message, str) else e.message,
+                    status=(
+                        GitAutograderStatus.ERROR
+                        if isinstance(e, GitAutograderInvalidStateException)
+                        else GitAutograderStatus.UNSUCCESSFUL
+                    ),
+                )
+            except Exception as e:
+                # Unexpected exception
+                output = GitAutograderOutput(
+                    exercise_name=self.exercise_name,
+                    started_at=None,
+                    completed_at=None,
+                    is_local=True,
+                    comments=[str(e)],
+                    status=GitAutograderStatus.ERROR,
+                )
+
+            assert output is not None
+            yield output
+
+
 @contextmanager
 def setup_autograder(
     exercise_name: str,
@@ -56,7 +117,6 @@ def setup_autograder(
             GitAutograderInvalidStateException,
             GitAutograderWrongAnswerException,
         ) as e:
-            print(e)
             output = GitAutograderOutput(
                 exercise_name=exercise_name,
                 started_at=started_at,
@@ -70,7 +130,6 @@ def setup_autograder(
                 ),
             )
         except Exception as e:
-            print(e)
             # Unexpected exception
             output = GitAutograderOutput(
                 exercise_name=exercise_name,
