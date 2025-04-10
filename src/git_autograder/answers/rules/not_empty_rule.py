@@ -3,6 +3,8 @@ from git_autograder.answers.rules.answer_rule import AnswerRule
 
 
 class NotEmptyRule(AnswerRule):
+    EMPTY = "Answer for {question} is empty."
+
     def apply(self, answer: GitAutograderAnswersRecord) -> None:
         if answer.answer.strip() != "":
-            raise Exception(f"Answer for {answer.question} is empty.")
+            raise Exception(self.EMPTY.format(question=answer.question))

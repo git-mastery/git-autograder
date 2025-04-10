@@ -5,6 +5,9 @@ from git_autograder.answers.rules.answer_rule import AnswerRule
 
 
 class ContainsListRule(AnswerRule):
+    INVALID_ITEM = "Answer for {question} contains an invalid item."
+    ALL_INVALID = "Answer for {question} does not contain any valid items."
+
     def __init__(
         self, values: List[str], subset: bool = True, is_case_sensitive: bool = False
     ) -> None:
@@ -22,8 +25,6 @@ class ContainsListRule(AnswerRule):
             else answer.answer_as_list()
         )
         if self.subset and not all([v in expected for v in given]):
-            raise Exception(f"Answer for {answer.question} contains an invalid item.")
+            raise Exception(self.INVALID_ITEM.format(question=answer.question))
         elif not any([v in expected for v in given]):
-            raise Exception(
-                f"Answer for {answer.question} does not contain any valid items."
-            )
+            raise Exception(self.ALL_INVALID.format(question=answer.question))
