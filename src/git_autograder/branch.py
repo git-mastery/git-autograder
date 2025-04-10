@@ -75,6 +75,10 @@ class GitAutograderBranch:
 
         return user_commits
 
+    @property
+    def latest_commit(self) -> GitAutograderCommit:
+        return self.user_commits[-1]
+
     def has_non_empty_commits(self) -> bool:
         """Returns if a given branch has any non-empty commits."""
         for commit in self.user_commits:
