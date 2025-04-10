@@ -2,6 +2,7 @@ __all__ = [
     "autograder",
     "setup_autograder",
     "set_env",
+    "assert_output",
     "GitAutograderRepo",
     "GitAutograderStatus",
     "GitAutograderOutput",
@@ -17,4 +18,4 @@ from .commit import GitAutograderCommit
 from .branch import GitAutograderBranch
 from .remote import GitAutograderRemote
 from .decorators import autograder
-from .test_utils import setup_autograder, set_env
+from .test_utils import setup_autograder, set_env, assert_output
