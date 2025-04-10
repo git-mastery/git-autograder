@@ -1,4 +1,4 @@
-from typing import Iterator, Union
+from typing import Iterator, List, Optional, Tuple, Union
 
 from difflib_parser.difflib_parser import DiffParser
 from git import Commit, Diff, DiffIndex
@@ -14,9 +14,31 @@ class GitAutograderDiffHelper:
         a: Union[Commit, GitAutograderCommit],
         b: Union[Commit, GitAutograderCommit],
     ) -> None:
-        a_commit = a if isinstance(a, Commit) else a.commit
-        b_commit = b if isinstance(b, Commit) else b.commit
+        a_commit = self.__get_commit(a)
+        b_commit = self.__get_commit(b)
         self.diff_index: DiffIndex[Diff] = a_commit.diff(b_commit)
+
+    def __get_commit(self, commit: Union[Commit, GitAutograderCommit]) -> Commit:
+        if isinstance(commit, Commit):
+            return commit
+        return commit.commit
+
+    @staticmethod
+    def get_file_diff(
+        a: Union[Commit, GitAutograderCommit],
+        b: Union[Commit, GitAutograderCommit],
+        file_path: str,
+    ) -> Optional[Tuple["GitAutograderDiff", Lit_change_type]]:
+        """Returns file difference between two commits across ALL change types."""
+        # Based on the expectation that there can only exist one change type per file in a diff
+        diff_helper = GitAutograderDiffHelper(a, b)
+        change_types: List[Lit_change_type] = ["A", "D", "R", "M", "T"]
+        for change_type in change_types:
+            for change in diff_helper.iter_changes(change_type):
+                if change.diff_parser is None or change.edited_file_path != file_path:
+                    continue
+                return change, change_type
+        return None
 
     def iter_changes(self, change_type: Lit_change_type) -> Iterator[GitAutograderDiff]:
         for change in self.diff_index.iter_change_type(change_type):
