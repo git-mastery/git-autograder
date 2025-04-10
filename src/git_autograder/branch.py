@@ -88,8 +88,7 @@ class GitAutograderBranch:
 
     def has_edited_file(self, file_path: str) -> bool:
         """Returns if a given file has been edited in a given branch."""
-        latest_commit = self.user_commits[-1]
-        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+        diff_helper = GitAutograderDiffHelper(self.start_commit, self.latest_commit)
         for diff in diff_helper.iter_changes("M"):
             if diff.edited_file_path == file_path:
                 return True
@@ -97,8 +96,7 @@ class GitAutograderBranch:
 
     def has_added_file(self, file_path: str) -> bool:
         """Returns if a given file has been added in a given branch."""
-        latest_commit = self.user_commits[-1]
-        diff_helper = GitAutograderDiffHelper(self.start_commit, latest_commit)
+        diff_helper = GitAutograderDiffHelper(self.start_commit, self.latest_commit)
         for diff in diff_helper.iter_changes("A"):
             if diff.edited_file_path == file_path:
                 return True
