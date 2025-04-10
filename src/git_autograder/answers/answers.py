@@ -2,7 +2,11 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from git_autograder.answers.answers_record import GitAutograderAnswersRecord
-from git_autograder.exception import GitAutograderInvalidStateException
+from git_autograder.answers.rules.answer_rule import AnswerRule
+from git_autograder.exception import (
+    GitAutograderInvalidStateException,
+    GitAutograderWrongAnswerException,
+)
 
 
 @dataclass
@@ -56,3 +60,21 @@ class GitAutograderAnswers:
                 self.MISSING_QUESTION.format(question=question)
             )
         return record
+
+    def validate_question(
+        self, question: str, rules: List[AnswerRule]
+    ) -> "GitAutograderAnswers":
+        """
+        Validates that a given GitAutograderAnswersRecord passes a set of rules.
+
+        :raises GitAutograderWrongAnswerException: when a rule is violated.
+        """
+        q = self.question(question)
+
+        for rule in rules:
+            try:
+                rule.apply(q)
+            except Exception as e:
+                raise GitAutograderWrongAnswerException([str(e)])
+
+        return self
