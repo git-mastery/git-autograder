@@ -1,4 +1,4 @@
-from typing import Any, List, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union
 
 from git import Commit, Stats
 
@@ -45,3 +45,8 @@ class GitAutograderCommit:
         """
         containing_branches = self.commit.repo.git.branch("--contains", self.hexsha)
         return [line[2:] for line in containing_branches.split("\n")]
+
+    def file_change_type(self, file_name: str) -> Optional[str]:
+        if file_name not in self.stats.files:
+            return None
+        return self.stats.files[file_name]["change_type"]
