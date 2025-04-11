@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "git-autograder"
-version = "2.5.0"
+version = "3.0.0"
 authors = [{ name = "Jiahao, Woo", email = "woojiahao1234@gmail.com" }]
 description = "Library for autograding Git repositories"
 readme = "README.md"
@@ -26,3 +26,6 @@ Issues = "https://github.com/git-mastery/git-autograder/issues"
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
 pythonpath = ["src"]
+
+[tool.mypy]
+mypy_path = "src"
