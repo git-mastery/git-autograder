@@ -34,3 +34,13 @@ class GitAutograderDiff:
                 return True
 
         return False
+
+    def has_edited_line(self) -> bool:
+        if self.diff_parser is None:
+            return False
+
+        for diff in self.diff_parser.iter_diffs():
+            if diff.code == DiffCode.CHANGED and diff.line.strip() != "":
+                return True
+
+        return False
