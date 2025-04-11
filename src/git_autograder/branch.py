@@ -106,3 +106,6 @@ class GitAutograderBranch:
             if diff.edited_file_path == file_path:
                 return True
         return False
+
+    def checkout(self) -> None:
+        self.branch.checkout()
