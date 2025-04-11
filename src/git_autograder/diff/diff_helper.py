@@ -1,6 +1,6 @@
 from typing import Iterator, List, Optional, Tuple, Union
 
-from difflib_parser.difflib_parser import DiffParser
+from difflib_parser import DifflibParser
 from git import Commit, Diff, DiffIndex
 from git.diff import Lit_change_type
 
@@ -68,7 +68,7 @@ class GitAutograderDiffHelper:
             )
 
             diff_parser = (
-                DiffParser(original_file.split("\n"), edited_file.split("\n"))
+                DifflibParser(original_file.split("\n"), edited_file.split("\n"))
                 if original_file is not None and edited_file is not None
                 else None
             )

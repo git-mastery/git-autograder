@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from difflib_parser.difflib_parser import DiffCode, DiffParser
+from difflib_parser import DiffCode, DifflibParser
 from git.diff import Diff, Lit_change_type
 
 
@@ -13,7 +13,7 @@ class GitAutograderDiff:
     edited_file_path: Optional[str]
     original_file: Optional[str]
     edited_file: Optional[str]
-    diff_parser: Optional[DiffParser]
+    diff_parser: Optional[DifflibParser]
 
     def has_deleted_line(self) -> bool:
         if self.diff_parser is None:
