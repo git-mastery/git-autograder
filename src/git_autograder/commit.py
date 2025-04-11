@@ -24,6 +24,14 @@ class GitAutograderCommit:
     def parents(self) -> Sequence["GitAutograderCommit"]:
         return [GitAutograderCommit(parent) for parent in self.commit.parents]
 
+    @property
+    def branches(self) -> List[str]:
+        """
+        Returns the branches that contain the current commit.
+        """
+        containing_branches = self.commit.repo.git.branch("--contains", self.hexsha)
+        return [line[2:] for line in containing_branches.split("\n")]
+
     def is_child(self, parent: Union[Commit, "GitAutograderCommit"]) -> bool:
         def _is_child(child: Commit, parent: Commit) -> bool:
             if child == parent:
@@ -38,13 +46,6 @@ class GitAutograderCommit:
         return _is_child(
             self.commit, parent if isinstance(parent, Commit) else parent.commit
         )
-
-    def branches(self) -> List[str]:
-        """
-        Returns the branches that contain the current commit.
-        """
-        containing_branches = self.commit.repo.git.branch("--contains", self.hexsha)
-        return [line[2:] for line in containing_branches.split("\n")]
 
     def file_change_type(self, file_name: str) -> Optional[str]:
         if file_name not in self.stats.files:
