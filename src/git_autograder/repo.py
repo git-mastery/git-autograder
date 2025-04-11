@@ -1,5 +1,4 @@
 import os
-from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -15,6 +14,7 @@ from git_autograder.exception import (
 )
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
+from git_autograder.helpers.file_helper import FileHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
 from git_autograder.output import GitAutograderOutput
 from git_autograder.status import GitAutograderStatus
@@ -45,6 +45,7 @@ class GitAutograderRepo:
         self.branches: BranchHelper = BranchHelper(self.repo)
         self.commits: CommitHelper = CommitHelper(self.repo)
         self.remotes: RemoteHelper = RemoteHelper(self.repo)
+        self.files: FileHelper = FileHelper(self.repo)
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
         self.__answers: Optional[GitAutograderAnswers] = None
 
