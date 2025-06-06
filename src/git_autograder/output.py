@@ -14,7 +14,6 @@ class GitAutograderOutput:
 
     started_at: Optional[datetime]
     completed_at: Optional[datetime]
-    is_local: Optional[bool]
     comments: Optional[List[str]] = None
     exercise_name: Optional[str] = None
 

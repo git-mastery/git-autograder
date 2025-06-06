@@ -57,7 +57,6 @@ class GitAutograderTestLoader:
             started_at = datetime.now(tz=pytz.UTC)
             try:
                 autograder = GitAutograderRepo(
-                    is_local=True,
                     exercise_name=self.exercise_name,
                     repo_path=r.working_dir,
                 )
@@ -70,7 +69,6 @@ class GitAutograderTestLoader:
                     exercise_name=self.exercise_name,
                     started_at=started_at,
                     completed_at=datetime.now(tz=pytz.UTC),
-                    is_local=True,
                     comments=[e.message] if isinstance(e.message, str) else e.message,
                     status=(
                         GitAutograderStatus.ERROR
@@ -84,7 +82,6 @@ class GitAutograderTestLoader:
                     exercise_name=self.exercise_name,
                     started_at=None,
                     completed_at=None,
-                    is_local=True,
                     comments=[str(e)],
                     status=GitAutograderStatus.ERROR,
                 )
@@ -110,7 +107,7 @@ def setup_autograder(
         started_at = datetime.now(tz=pytz.UTC)
         try:
             autograder = GitAutograderRepo(
-                is_local=True, exercise_name=exercise_name, repo_path=r.working_dir
+                exercise_name=exercise_name, repo_path=r.working_dir
             )
             output = grade_func(autograder)
         except (
@@ -121,7 +118,6 @@ def setup_autograder(
                 exercise_name=exercise_name,
                 started_at=started_at,
                 completed_at=datetime.now(tz=pytz.UTC),
-                is_local=True,
                 comments=[e.message] if isinstance(e.message, str) else e.message,
                 status=(
                     GitAutograderStatus.ERROR
@@ -135,7 +131,6 @@ def setup_autograder(
                 exercise_name=exercise_name,
                 started_at=None,
                 completed_at=None,
-                is_local=True,
                 comments=[str(e)],
                 status=GitAutograderStatus.ERROR,
             )
