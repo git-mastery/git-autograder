@@ -98,6 +98,10 @@ def setup_autograder(
     grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
     setup: Optional[Callable[[Repo], None]] = None,
 ) -> Iterator[GitAutograderOutput]:
+    # This is done to work around the limitation of running tests not within the exercise/tests/ folder
+    cur_dir = os.path.dirname(__file__)
+    spec_path = os.path.join(cur_dir, spec_path)
+
     repo_initializer = initialize_repo(spec_path)
     attach_start_tag(repo_initializer, step_id)
     with repo_initializer.initialize() as r:
