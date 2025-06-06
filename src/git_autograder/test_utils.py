@@ -35,9 +35,11 @@ def set_env(**kwargs) -> mock._patch_dict:
 class GitAutograderTestLoader:
     def __init__(
         self,
+        test_path: str,
         exercise_name: str,
         grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
     ) -> None:
+        self.test_path = test_path
         self.exercise_name = exercise_name
         self.grade_func = grade_func
 
@@ -49,8 +51,8 @@ class GitAutograderTestLoader:
         setup: Optional[Callable[[Repo], None]] = None,
     ) -> Iterator[GitAutograderOutput]:
         # This is done to work around the limitation of running tests not within the exercise/tests/ folder
-        cur_dir = os.path.dirname(__file__)
-        spec_path = os.path.join(cur_dir, spec_path)
+        test_dir = os.path.dirname(self.test_path)
+        spec_path = os.path.join(test_dir, spec_path)
 
         repo_initializer = initialize_repo(spec_path)
         attach_start_tag(repo_initializer, step_id)
