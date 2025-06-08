@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from git_autograder.answers.answers_record import GitAutograderAnswersRecord
 from git_autograder.answers.rules.answer_rule import AnswerRule
@@ -15,6 +15,7 @@ class GitAutograderAnswers:
 
     questions: List[str]
     answers: List[str]
+    validations: Dict[str, List[AnswerRule]]
 
     @property
     def qna(self) -> List[GitAutograderAnswersRecord]:
@@ -61,24 +62,23 @@ class GitAutograderAnswers:
             )
         return record
 
-    def validate_question(
-        self, question: str, rules: List[AnswerRule]
-    ) -> "GitAutograderAnswers":
-        """
-        Validates that a given GitAutograderAnswersRecord passes a set of rules.
+    def add_validation(self, question: str, rule: AnswerRule) -> "GitAutograderAnswers":
+        if question not in self.validations:
+            self.validations[question] = []
+        self.validations[question].append(rule)
+        return self
 
-        :raises GitAutograderWrongAnswerException: when a rule is violated.
-        """
-        q = self.question(question)
-        errors = []
+    def validate(self) -> None:
+        errors: List[str] = []
 
-        for rule in rules:
-            try:
-                rule.apply(q)
-            except Exception as e:
-                errors.append(str(e))
+        for question, validations in self.validations.items():
+            answer_record = self.question(question)
+            for validation in validations:
+                try:
+                    validation.apply(answer_record)
+                except Exception as e:
+                    errors.append(str(e))
+                    break
 
         if errors:
             raise GitAutograderWrongAnswerException(errors)
-
-        return self
