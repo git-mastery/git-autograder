@@ -6,5 +6,5 @@ class NotEmptyRule(AnswerRule):
     EMPTY = "Answer for {question} is empty."
 
     def apply(self, answer: GitAutograderAnswersRecord) -> None:
-        if answer.answer.strip() != "":
+        if answer.answer.strip() == "":
             raise Exception(self.EMPTY.format(question=answer.question))
