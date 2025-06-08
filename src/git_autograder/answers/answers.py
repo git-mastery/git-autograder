@@ -70,11 +70,15 @@ class GitAutograderAnswers:
         :raises GitAutograderWrongAnswerException: when a rule is violated.
         """
         q = self.question(question)
+        errors = []
 
         for rule in rules:
             try:
                 rule.apply(q)
             except Exception as e:
-                raise GitAutograderWrongAnswerException([str(e)])
+                errors.append(str(e))
+
+        if errors:
+            raise GitAutograderWrongAnswerException(errors)
 
         return self
