@@ -46,7 +46,9 @@ class GitAutograderAnswersParser:
                 "Invalid answers format: missing question(s) or answer(s) or both"
             )
 
-        return GitAutograderAnswers(questions=questions, answers=answers)
+        return GitAutograderAnswers(
+            questions=questions, answers=answers, validations={}
+        )
 
     def __preserve_whitespace_join(
         self, lines: List[str], delimiter: str = "\n"
