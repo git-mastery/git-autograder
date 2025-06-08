@@ -14,4 +14,4 @@ class HasExactValueRule(AnswerRule):
         expected = self.value.lower() if self.is_case_sensitive else self.value
         given = answer.answer.lower() if self.is_case_sensitive else answer.answer
         if given != expected:
-            raise Exception(self.NOT_EXACT.format(answer.question))
+            raise Exception(self.NOT_EXACT.format(question=answer.question))
