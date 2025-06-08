@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 
 from git_autograder.answers.answers_record import GitAutograderAnswersRecord
 from git_autograder.answers.rules.answer_rule import AnswerRule
+from git_autograder.answers.rules.not_empty_rule import NotEmptyRule
 from git_autograder.exception import (
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
@@ -62,10 +63,12 @@ class GitAutograderAnswers:
             )
         return record
 
-    def add_validation(self, question: str, rule: AnswerRule) -> "GitAutograderAnswers":
+    def add_validation(
+        self, question: str, *rules: AnswerRule
+    ) -> "GitAutograderAnswers":
         if question not in self.validations:
             self.validations[question] = []
-        self.validations[question].append(rule)
+        self.validations[question] += rules
         return self
 
     def validate(self) -> None:
