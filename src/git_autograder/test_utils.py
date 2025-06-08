@@ -35,9 +35,11 @@ def set_env(**kwargs) -> mock._patch_dict:
 class GitAutograderTestLoader:
     def __init__(
         self,
+        test_path: str,
         exercise_name: str,
         grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
     ) -> None:
+        self.test_path = test_path
         self.exercise_name = exercise_name
         self.grade_func = grade_func
 
@@ -48,6 +50,10 @@ class GitAutograderTestLoader:
         step_id: str,
         setup: Optional[Callable[[Repo], None]] = None,
     ) -> Iterator[GitAutograderOutput]:
+        # This is done to work around the limitation of running tests not within the exercise/tests/ folder
+        test_dir = os.path.dirname(self.test_path)
+        spec_path = os.path.join(test_dir, spec_path)
+
         repo_initializer = initialize_repo(spec_path)
         attach_start_tag(repo_initializer, step_id)
         with repo_initializer.initialize() as r:
@@ -57,7 +63,6 @@ class GitAutograderTestLoader:
             started_at = datetime.now(tz=pytz.UTC)
             try:
                 autograder = GitAutograderRepo(
-                    is_local=True,
                     exercise_name=self.exercise_name,
                     repo_path=r.working_dir,
                 )
@@ -70,7 +75,6 @@ class GitAutograderTestLoader:
                     exercise_name=self.exercise_name,
                     started_at=started_at,
                     completed_at=datetime.now(tz=pytz.UTC),
-                    is_local=True,
                     comments=[e.message] if isinstance(e.message, str) else e.message,
                     status=(
                         GitAutograderStatus.ERROR
@@ -84,7 +88,6 @@ class GitAutograderTestLoader:
                     exercise_name=self.exercise_name,
                     started_at=None,
                     completed_at=None,
-                    is_local=True,
                     comments=[str(e)],
                     status=GitAutograderStatus.ERROR,
                 )
@@ -101,6 +104,10 @@ def setup_autograder(
     grade_func: Callable[[GitAutograderRepo], GitAutograderOutput],
     setup: Optional[Callable[[Repo], None]] = None,
 ) -> Iterator[GitAutograderOutput]:
+    # This is done to work around the limitation of running tests not within the exercise/tests/ folder
+    cur_dir = os.path.dirname(__file__)
+    spec_path = os.path.join(cur_dir, spec_path)
+
     repo_initializer = initialize_repo(spec_path)
     attach_start_tag(repo_initializer, step_id)
     with repo_initializer.initialize() as r:
@@ -110,7 +117,7 @@ def setup_autograder(
         started_at = datetime.now(tz=pytz.UTC)
         try:
             autograder = GitAutograderRepo(
-                is_local=True, exercise_name=exercise_name, repo_path=r.working_dir
+                exercise_name=exercise_name, repo_path=r.working_dir
             )
             output = grade_func(autograder)
         except (
@@ -121,7 +128,6 @@ def setup_autograder(
                 exercise_name=exercise_name,
                 started_at=started_at,
                 completed_at=datetime.now(tz=pytz.UTC),
-                is_local=True,
                 comments=[e.message] if isinstance(e.message, str) else e.message,
                 status=(
                     GitAutograderStatus.ERROR
@@ -135,7 +141,6 @@ def setup_autograder(
                 exercise_name=exercise_name,
                 started_at=None,
                 completed_at=None,
-                is_local=True,
                 comments=[str(e)],
                 status=GitAutograderStatus.ERROR,
             )

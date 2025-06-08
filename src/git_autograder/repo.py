@@ -23,22 +23,14 @@ from git_autograder.status import GitAutograderStatus
 class GitAutograderRepo:
     def __init__(
         self,
-        is_local: bool,
         exercise_name: str,
-        repo_path: Optional[str | os.PathLike] = None,
+        repo_path: str | os.PathLike,
     ) -> None:
         # TODO: We should not be starting the grading at the point of initializing, but
         # we're keeping this because of the exception system
         self.started_at = self.__now()
-        self.is_local: bool = is_local
         self.exercise_name = exercise_name
-        self.repo_path = (
-            repo_path
-            if repo_path is not None
-            else Path.cwd().parent / "main"
-            if not is_local
-            else Path.cwd().parent / "exercises" / exercise_name
-        )
+        self.repo_path = repo_path
 
         self.repo: Repo = Repo(self.repo_path)
 
@@ -85,7 +77,6 @@ class GitAutograderRepo:
             exercise_name=self.exercise_name,
             started_at=self.started_at,
             completed_at=self.__now(),
-            is_local=self.is_local,
             comments=comments,
             status=(
                 GitAutograderStatus.SUCCESSFUL

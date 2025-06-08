@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "git-autograder"
-version = "3.0.0"
+version = "4.0.0"
 authors = [{ name = "Jiahao, Woo", email = "woojiahao1234@gmail.com" }]
 description = "Library for autograding Git repositories"
 readme = "README.md"
@@ -16,7 +16,13 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 license.file = "LICENSE"
-dependencies = ["pytz", "types-pytz", "difflib_parser", "GitPython"]
+dependencies = [
+  "pytz",
+  "types-pytz",
+  "difflib_parser",
+  "GitPython",
+  "repo-smith",
+]
 
 [project.urls]
 Homepage = "https://github.com/git-mastery/git-autograder.git"
