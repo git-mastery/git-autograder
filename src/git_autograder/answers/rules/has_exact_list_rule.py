@@ -28,5 +28,7 @@ class HasExactListRule(AnswerRule):
         )
         if self.ordered and expected != given:
             raise Exception(self.INCORRECT_ORDERED.format(question=answer.question))
-        elif set(expected).intersection(set(given)) != len(expected):
+        elif not self.ordered and len(set(expected).intersection(set(given))) != len(
+            expected
+        ):
             raise Exception(self.INCORRECT_UNORDERED.format(question=answer.question))
