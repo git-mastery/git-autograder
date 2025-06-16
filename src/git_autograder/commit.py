@@ -32,6 +32,9 @@ class GitAutograderCommit:
         containing_branches = self.commit.repo.git.branch("--contains", self.hexsha)
         return [line[2:] for line in containing_branches.split("\n")]
 
+    def checkout(self) -> None:
+        self.commit.repo.git.checkout(self.commit)
+
     def is_child(self, parent: Union[Commit, "GitAutograderCommit"]) -> bool:
         def _is_child(child: Commit, parent: Commit) -> bool:
             if child == parent:
