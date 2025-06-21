@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
+from git import InvalidGitRepositoryError
 import pytz
 
 from git_autograder.answers.answers import GitAutograderAnswers
@@ -38,21 +39,27 @@ class GitAutograderExercise:
         self.config = ExerciseConfig.read_config(exercise_config_path)
 
         self.exercise_name = self.config.exercise_name
-        if (
-            self.config.exercise_repo.init
-            or self.config.exercise_repo.repo_type == "remote"
-        ):
-            # Only initialize the sub-folder as a Git repository when we're sure that
-            # it will be a Git repository
-            self.repo: Optional[GitAutograderRepo] = GitAutograderRepo(
-                self.config.exercise_name, self.config.exercise_repo.repo_name
+        try:
+            # We can always make the assumption that when verifying, we should always
+            # first have a Git repository.
+            # The only edge cases are those where they run git init themselves, but that
+            # is the purpose of handling the exception where we can display an error on
+            # their end.
+            self.repo: GitAutograderRepo = GitAutograderRepo(
+                self.config.exercise_name,
+                Path(exercise_path) / self.config.exercise_repo.repo_name,
             )
+        except InvalidGitRepositoryError:
+            raise GitAutograderInvalidStateException("Exercise is not a Git repository")
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
         self.__answers: Optional[GitAutograderAnswers] = None
 
     @property
     def answers(self) -> GitAutograderAnswers:
         """Parses a QnA file (answers.txt). Verifies that the file exists."""
+        if self.__answers is not None:
+            return self.__answers
+
         # We need to use singleton patterns here since we want to avoid repeatedly parsing
         # These are all optional to start since the grader might not require answers
         if self.__answers_parser is None:
