@@ -1,5 +1,4 @@
 __all__ = [
-    "setup_autograder",
     "set_env",
     "assert_output",
     "GitAutograderException",
@@ -12,22 +11,23 @@ __all__ = [
     "GitAutograderBranch",
     "GitAutograderRemote",
     "GitAutograderCommit",
+    "GitAutograderExercise",
 ]
 
-from .status import GitAutograderStatus
-from .output import GitAutograderOutput
+from .branch import GitAutograderBranch
+from .commit import GitAutograderCommit
 from .exception import (
     GitAutograderException,
     GitAutograderInvalidStateException,
     GitAutograderWrongAnswerException,
 )
-from .repo import GitAutograderRepo
-from .commit import GitAutograderCommit
-from .branch import GitAutograderBranch
+from .exercise import GitAutograderExercise
+from .output import GitAutograderOutput
 from .remote import GitAutograderRemote
+from .repo import GitAutograderRepo
+from .status import GitAutograderStatus
 from .test_utils import (
-    setup_autograder,
-    set_env,
-    assert_output,
     GitAutograderTestLoader,
+    assert_output,
+    set_env,
 )
