@@ -5,8 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
-from git import InvalidGitRepositoryError
 import pytz
+from git import InvalidGitRepositoryError
 
 from git_autograder.answers.answers import GitAutograderAnswers
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
@@ -31,7 +31,7 @@ class GitAutograderExercise:
         self.exercise_path = exercise_path
 
         exercise_config_path = Path(exercise_path) / ".gitmastery-exercise.json"
-        if not os.path.isfile(exercise_config_path):
+        if not self.has_exercise_config(exercise_config_path):
             raise GitAutograderInvalidStateException(
                 "Missing .gitmastery-exercise.json"
             )
@@ -76,6 +76,10 @@ class GitAutograderExercise:
             self.__answers = self.__answers_parser.answers
 
         return self.__answers
+
+    def has_exercise_config(self, exercise_config_path: str | Path) -> bool:
+        # Separate method because it's easier to mock the result
+        return os.path.isfile(exercise_config_path)
 
     @staticmethod
     def __now() -> datetime:

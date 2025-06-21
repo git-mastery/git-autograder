@@ -92,6 +92,10 @@ class GitAutograderTestLoader:
                 "git_autograder.exercise_config.ExerciseConfig.read_config",
                 return_value=fake_config,
             ),
+            mock.patch(
+                "git_autograder.exercise.GitAutograderExercise.has_exercise_config",
+                return_value=True,
+            ),
             mock.patch.object(
                 GitAutograderExercise, "answers", new_callable=mock.PropertyMock
             ) as mock_answers_property,
