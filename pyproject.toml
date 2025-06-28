@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "git-autograder"
-version = "5.0.0"
+version = "5.1.0"
 authors = [{ name = "Jiahao, Woo", email = "woojiahao1234@gmail.com" }]
 description = "Library for autograding Git repositories"
 readme = "README.md"
