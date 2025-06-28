@@ -86,6 +86,9 @@ class GitAutograderExercise:
         return datetime.now(tz=pytz.UTC)
 
     def write_config(self, key: str, value: Any) -> None:
+        # TODO: Maybe we should be updating the config object directly so re-reading
+        # won't need to reload? Alternatively, maybe we should make it such that the
+        # config is the config, the written variables are a separate file loaded
         raw_config = {}
         with open(self.exercise_config_path, "r") as file:
             raw_config = json.load(file)
