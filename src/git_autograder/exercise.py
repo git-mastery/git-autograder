@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 import pytz
 from git import InvalidGitRepositoryError
@@ -30,13 +30,13 @@ class GitAutograderExercise:
         self.started_at = self.__now()
         self.exercise_path = exercise_path
 
-        exercise_config_path = Path(exercise_path) / ".gitmastery-exercise.json"
-        if not self.has_exercise_config(exercise_config_path):
+        self.exercise_config_path = Path(exercise_path) / ".gitmastery-exercise.json"
+        if not self.has_exercise_config(self.exercise_config_path):
             raise GitAutograderInvalidStateException(
                 "Missing .gitmastery-exercise.json"
             )
 
-        self.config = ExerciseConfig.read_config(exercise_config_path)
+        self.config = ExerciseConfig.read_config(self.exercise_config_path)
 
         self.exercise_name = self.config.exercise_name
         try:
@@ -84,6 +84,14 @@ class GitAutograderExercise:
     @staticmethod
     def __now() -> datetime:
         return datetime.now(tz=pytz.UTC)
+
+    def write_config(self, key: str, value: Any) -> None:
+        raw_config = {}
+        with open(self.exercise_config_path, "r") as file:
+            raw_config = json.load(file)
+        raw_config[key] = value
+        with open(self.exercise_config_path, "w") as file:
+            file.write(json.dumps(raw_config))
 
     def to_output(
         self, comments: List[str], status: GitAutograderStatus
