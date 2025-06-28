@@ -1,3 +1,4 @@
+import re
 from typing import Any, List
 
 from git import Head
@@ -5,6 +6,7 @@ from git import Head
 from git_autograder.commit import GitAutograderCommit
 from git_autograder.diff import GitAutograderDiffHelper
 from git_autograder.exception import GitAutograderInvalidStateException
+from git_autograder.reflog_entry import GitAutograderReflogEntry
 
 
 class GitAutograderBranch:
@@ -22,6 +24,25 @@ class GitAutograderBranch:
     @property
     def name(self) -> str:
         return self.branch.name
+
+    @property
+    def reflog(self) -> List[GitAutograderReflogEntry]:
+        output = self.branch.repo.git.reflog("show", self.name).splitlines()
+        reflog_pattern = re.compile(r"^([a-f0-9]+) HEAD@\{(\d+)\}: ([^:]+): (.+)$")
+        entries = []
+        for line in output:
+            groups = reflog_pattern.match(line)
+            if groups:
+                sha, index, action, message = groups.groups()
+                entries.append(
+                    GitAutograderReflogEntry(
+                        sha=sha,
+                        index=int(index),
+                        action=action,
+                        message=message,
+                    )
+                )
+        return entries
 
     @property
     def commits(self) -> List[GitAutograderCommit]:
