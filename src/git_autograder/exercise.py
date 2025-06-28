@@ -93,6 +93,14 @@ class GitAutograderExercise:
         with open(self.exercise_config_path, "w") as file:
             file.write(json.dumps(raw_config))
 
+    def read_config(self, key: str) -> Optional[Any]:
+        raw_config = {}
+        with open(self.exercise_config_path, "r") as file:
+            raw_config = json.load(file)
+        if key not in raw_config:
+            return None
+        return raw_config[key]
+
     def to_output(
         self, comments: List[str], status: GitAutograderStatus
     ) -> GitAutograderOutput:
