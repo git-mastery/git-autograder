@@ -30,7 +30,7 @@ class GitAutograderBranch:
         output = self.branch.repo.git.reflog("show", self.name).splitlines()
         # We need to dynamically configure the regex
         regex_str = (
-            "^([a-f0-9]+)(?: \(.*\))? " + self.name + "@\{(\d+)\}: ([^:]+): (.+)$"
+            "^([a-f0-9]+)(?: \\(.*\\))? " + self.name + "@\\{(\\d+)\\}: ([^:]+): (.+)$"
         )
         reflog_pattern = re.compile(regex_str)
         entries = []
