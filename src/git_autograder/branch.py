@@ -111,7 +111,8 @@ class GitAutograderBranch:
 
     @property
     def latest_commit(self) -> GitAutograderCommit:
-        return self.commits[-1]
+        # This list is sorted in descending order
+        return self.commits[0]
 
     def has_non_empty_commits(self) -> bool:
         """Returns if a given branch has any non-empty commits."""
@@ -122,7 +123,9 @@ class GitAutograderBranch:
 
     def has_edited_file(self, file_path: str) -> bool:
         """Returns if a given file has been edited in a given branch."""
-        diff_helper = GitAutograderDiffHelper(self.start_commit, self.latest_commit)
+        diff_helper = GitAutograderDiffHelper(
+            self.start_commit, self.latest_user_commit
+        )
         for diff in diff_helper.iter_changes("M"):
             if diff.edited_file_path == file_path:
                 return True
@@ -130,7 +133,9 @@ class GitAutograderBranch:
 
     def has_added_file(self, file_path: str) -> bool:
         """Returns if a given file has been added in a given branch."""
-        diff_helper = GitAutograderDiffHelper(self.start_commit, self.latest_commit)
+        diff_helper = GitAutograderDiffHelper(
+            self.start_commit, self.latest_user_commit
+        )
         for diff in diff_helper.iter_changes("A"):
             if diff.edited_file_path == file_path:
                 return True
