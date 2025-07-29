@@ -18,12 +18,9 @@ jobs:
         run: |
           sphinx-build source docs
       - name: Publish to docs branch
-        env:
-          USER_NAME: ${{ process.env.GITHUB_ACTOR }}
-          USER_EMAIL: ${{ process.env.GITHUB_ACTOR }}@users.noreply.github.com
         run: |
-          git config --global user.name "${USER_NAME}"
-          git config --global user.email "${USER_EMAIL}"
+          git config --global user.name "GitHub Action"
+          git config --global user.email "github-action@users.noreply.github.com"
           git add .
           git commit -m "Upload docs"
           git push origin docs
