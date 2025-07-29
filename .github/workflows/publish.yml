@@ -26,4 +26,4 @@ jobs:
           git commit -m "Upload docs"
           git remote remove origin
           git remote add origin https://github.com/git-mastery/git-autograder.git
-          git push origin docs
+          git push --force origin docs
