@@ -1,0 +1,29 @@
+name: documentation
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx_rtd_theme myst_parser
+      - name: Sphinx build
+        run: |
+          sphinx-build source docs
+      - name: Publish to docs branch
+        env:
+          USER_NAME: ${{ process.env.GITHUB_ACTOR }}
+          USER_EMAIL: ${{ process.env.GITHUB_ACTOR }}@users.noreply.github.com
+        run: |
+          git config --global user.name "${USER_NAME}"
+          git config --global user.email "${USER_EMAIL}"
+          git add .
+          git commit -m "Upload docs"
+          git push origin docs
