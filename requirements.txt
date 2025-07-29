@@ -7,3 +7,4 @@ twine
 build
 mypy
 repo-smith
+sphinx
