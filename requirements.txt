@@ -7,4 +7,7 @@ twine
 build
 mypy
 repo-smith
+
+# For documentation
 sphinx
+sphinx-rtd-theme
