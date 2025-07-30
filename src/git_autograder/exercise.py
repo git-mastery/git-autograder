@@ -21,10 +21,28 @@ from git_autograder.status import GitAutograderStatus
 
 
 class GitAutograderExercise:
+    """This is the central Git-Mastery exercise grading layer. It essentially provides a
+    central layer to create autograding for a given exercise.
+
+    Exercises have the following folder structure::
+
+        exercise_root/
+        |_ README.md
+        |_ .gitmastery-exercise.json
+        |_ *resource_files
+        |_ repo/
+        |_ .git/
+
+    :param exercise_path: Path to a given exercise folder
+    :type exercise_path: Union[str, os.PathLike]
+    """
     def __init__(
         self,
         exercise_path: str | os.PathLike,
     ) -> None:
+        """Constructor method
+        """
+
         # TODO: We should not be starting the grading at the point of initializing, but
         # we're keeping this because of the exception system
         self.started_at = self.__now()
