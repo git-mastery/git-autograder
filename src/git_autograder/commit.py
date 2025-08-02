@@ -58,12 +58,11 @@ class GitAutograderCommit:
         return self.stats.files[file_name]["change_type"]
 
     @contextmanager
-    def file(
-        self, file_path: Union[str, os.PathLike[str]]
-    ) -> Iterator[Optional[TextIO]]:
+    def file(self, file_path: str) -> Iterator[Optional[str]]:
+        content = None
         try:
-            rel_path = os.fspath(file_path)
-            file_blob = self.commit.tree / rel_path
-            yield file_blob.data_stream.read().decode()
+            file_blob = self.commit.tree / file_path
+            content = file_blob.data_stream.read().decode("utf-8")
         except Exception:
-            yield None
+            content = None
+        yield content
