@@ -33,12 +33,15 @@ class GitAutograderRemote:
             path_parts = parsed.path.strip("/").split("/")
         elif remote_url.startswith("git@github.com"):
             # git@github.com:<owner>/<repo>.git
-            path_parts = remote_url.split(":")[1].split("/")
+            components = remote_url.split(":")
+            if len(components) != 2:
+                return False
+            path_parts = components[1].split("/")
         else:
             return False
 
         owner_part, repo_part = path_parts
         if repo_part.endswith(".git"):
-            repo_part = repo_part[:-1]
+            repo_part = repo_part[:-4]
 
         return owner_part == owner and repo_part == repo_name
