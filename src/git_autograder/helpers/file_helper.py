@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from typing import Iterator, Optional, Union, TextIO
+from typing import Iterator, List, Optional, TextIO, Union
 
 from git import Repo
 
@@ -25,3 +25,6 @@ class FileHelper:
         file_path = os.path.join(self.repo.working_dir, path)
         with open(file_path, "r") as file:
             yield file
+
+    def untracked_files(self) -> List[str]:
+        return self.repo.untracked_files
