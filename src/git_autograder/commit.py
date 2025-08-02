@@ -1,4 +1,6 @@
-from typing import Any, List, Optional, Sequence, Union
+import os
+from contextlib import contextmanager
+from typing import Any, Iterator, List, Optional, Sequence, TextIO, Union
 
 from git import Commit, Stats
 
@@ -54,3 +56,14 @@ class GitAutograderCommit:
         if file_name not in self.stats.files:
             return None
         return self.stats.files[file_name]["change_type"]
+
+    @contextmanager
+    def file(
+        self, file_path: Union[str, os.PathLike[str]]
+    ) -> Iterator[Optional[TextIO]]:
+        try:
+            rel_path = os.fspath(file_path)
+            file_blob = self.commit.tree / rel_path
+            yield file_blob.data_stream.read().decode()
+        except Exception:
+            yield None
