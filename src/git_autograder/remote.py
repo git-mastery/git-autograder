@@ -1,4 +1,5 @@
 from typing import Any, List
+from urllib.parse import urlparse
 
 from git import Remote
 
@@ -23,3 +24,21 @@ class GitAutograderRemote:
                 tracked.add(b)
                 self.remote.repo.git.checkout("-b", b, f"{self.remote.name}/{b}")
                 break
+
+    def is_for_repo(self, owner: str, repo_name: str) -> bool:
+        remote_url = self.remote.url
+        if remote_url.startswith("https://github.com"):
+            # https://github.com/<owner>/<repo>.git
+            parsed = urlparse(remote_url)
+            path_parts = parsed.path.strip("/").split("/")
+        elif remote_url.startswith("git@github.com"):
+            # git@github.com:<owner>/<repo>.git
+            path_parts = remote_url.split(":")[1].split("/")
+        else:
+            return False
+
+        owner_part, repo_part = path_parts
+        if repo_part.endswith(".git"):
+            repo_part = repo_part[:-1]
+
+        return owner_part == owner and repo_part == repo_name
