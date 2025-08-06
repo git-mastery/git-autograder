@@ -16,7 +16,9 @@ from git_autograder.exception import (
 )
 from git_autograder.exercise_config import ExerciseConfig
 from git_autograder.output import GitAutograderOutput
-from git_autograder.repo import GitAutograderRepo
+from git_autograder.repo.null_repo import NullGitAutograderRepo
+from git_autograder.repo.repo import GitAutograderRepo
+from git_autograder.repo.repo_base import GitAutograderRepoBase
 from git_autograder.status import GitAutograderStatus
 
 
@@ -36,12 +38,12 @@ class GitAutograderExercise:
     :param exercise_path: Path to a given exercise folder
     :type exercise_path: Union[str, os.PathLike]
     """
+
     def __init__(
         self,
         exercise_path: str | os.PathLike,
     ) -> None:
-        """Constructor method
-        """
+        """Constructor method"""
 
         # TODO: We should not be starting the grading at the point of initializing, but
         # we're keeping this because of the exception system
@@ -63,10 +65,14 @@ class GitAutograderExercise:
             # The only edge cases are those where they run git init themselves, but that
             # is the purpose of handling the exception where we can display an error on
             # their end.
-            self.repo: GitAutograderRepo = GitAutograderRepo(
-                self.config.exercise_name,
-                Path(exercise_path) / self.config.exercise_repo.repo_name,
-            )
+            self.repo: GitAutograderRepoBase
+            if self.config.exercise_repo.repo_type == "ignore":
+                self.repo = NullGitAutograderRepo()
+            else:
+                self.repo = GitAutograderRepo(
+                    self.config.exercise_name,
+                    Path(exercise_path) / self.config.exercise_repo.repo_name,
+                )
         except InvalidGitRepositoryError:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None

@@ -6,6 +6,7 @@ __all__ = [
     "GitAutograderWrongAnswerException",
     "GitAutograderTestLoader",
     "GitAutograderRepo",
+    "GitAutograderRepoBase",
     "GitAutograderStatus",
     "GitAutograderOutput",
     "GitAutograderBranch",
@@ -24,7 +25,8 @@ from .exception import (
 from .exercise import GitAutograderExercise
 from .output import GitAutograderOutput
 from .remote import GitAutograderRemote
-from .repo import GitAutograderRepo
+from .repo.repo import GitAutograderRepo
+from .repo.repo_base import GitAutograderRepoBase
 from .status import GitAutograderStatus
 from .test_utils import (
     GitAutograderTestLoader,
