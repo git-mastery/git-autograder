@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 
 from git import Repo
 
@@ -9,17 +9,22 @@ from git_autograder.helpers.remote_helper import RemoteHelper
 
 
 class GitAutograderRepoBase(ABC):
+    @property
     @abstractmethod
     def repo(self) -> Repo: ...
 
+    @property
     @abstractmethod
     def branches(self) -> BranchHelper: ...
 
+    @property
     @abstractmethod
     def commits(self) -> CommitHelper: ...
 
+    @property
     @abstractmethod
     def remotes(self) -> RemoteHelper: ...
 
+    @property
     @abstractmethod
     def files(self) -> FileHelper: ...

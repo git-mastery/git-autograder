@@ -25,17 +25,22 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self._remotes: RemoteHelper = RemoteHelper(self._repo)
         self._files: FileHelper = FileHelper(self._repo)
 
+    @property
     def repo(self) -> Repo:
         return self._repo
 
+    @property
     def branches(self) -> BranchHelper:
         return self._branches
 
+    @property
     def commits(self) -> CommitHelper:
         return self._commits
 
+    @property
     def remotes(self) -> RemoteHelper:
         return self._remotes
 
+    @property
     def files(self) -> FileHelper:
         return self._files
