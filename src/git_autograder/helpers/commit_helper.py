@@ -13,3 +13,12 @@ class CommitHelper:
     def commit(self, rev: Optional[Union[Commit_ish, str]]) -> GitAutograderCommit:
         c = self.repo.commit(rev)
         return GitAutograderCommit(c)
+
+    def commit_or_none(
+        self, rev: Optional[Union[Commit_ish, str]]
+    ) -> Optional[GitAutograderCommit]:
+        try:
+            c = self.repo.commit(rev)
+            return GitAutograderCommit(c)
+        except Exception:
+            return None
