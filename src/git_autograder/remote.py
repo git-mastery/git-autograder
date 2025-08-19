@@ -40,7 +40,8 @@ class GitAutograderRemote:
         else:
             return False
 
-        owner_part, repo_part = path_parts
+        owner_part = path_parts[0]
+        repo_part = path_parts[1]
         if repo_part.endswith(".git"):
             repo_part = repo_part[:-4]
 
