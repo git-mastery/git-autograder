@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "git-autograder"
-version = "6.3.0"
+dynamic = ["version"]
 authors = [{ name = "Jiahao, Woo", email = "woojiahao1234@gmail.com" }]
 description = "Library for autograding Git repositories"
 readme = "README.md"
@@ -35,3 +35,6 @@ pythonpath = ["src"]
 
 [tool.mypy]
 mypy_path = "src"
+
+[tool.hatch.version]
+path = "src/git_autograder/version.py"
