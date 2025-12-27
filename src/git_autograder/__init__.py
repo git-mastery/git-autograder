@@ -1,10 +1,7 @@
 __all__ = [
-    "set_env",
-    "assert_output",
     "GitAutograderException",
     "GitAutograderInvalidStateException",
     "GitAutograderWrongAnswerException",
-    "GitAutograderTestLoader",
     "GitAutograderRepo",
     "GitAutograderRepoBase",
     "GitAutograderStatus",
@@ -28,8 +25,3 @@ from .remote import GitAutograderRemote
 from .repo.repo import GitAutograderRepo
 from .repo.repo_base import GitAutograderRepoBase
 from .status import GitAutograderStatus
-from .test_utils import (
-    GitAutograderTestLoader,
-    assert_output,
-    set_env,
-)
