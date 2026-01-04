@@ -66,7 +66,7 @@ class GitAutograderExercise:
             # is the purpose of handling the exception where we can display an error on
             # their end.
             self.repo: GitAutograderRepoBase
-            if self.config.exercise_repo.repo_type == "ignore":
+            if self.config.exercise_repo.repo_type == "ignore" or self.config.exercise_repo.repo_type == "local-ignore":
                 self.repo = NullGitAutograderRepo()
             else:
                 self.repo = GitAutograderRepo(
