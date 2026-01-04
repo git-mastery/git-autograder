@@ -8,7 +8,7 @@ from typing import Dict, List, Literal, Optional
 class ExerciseConfig:
     @dataclass
     class ExerciseRepoConfig:
-        repo_type: Literal["local", "remote", "ignore"]
+        repo_type: Literal["local", "remote", "ignore", "local-ignore"]
         repo_name: str
         repo_title: Optional[str]
         create_fork: Optional[bool]
