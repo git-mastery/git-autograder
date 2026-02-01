@@ -20,7 +20,8 @@ Python library for autograding Git repositories, used by Git Mastery exercise re
   - `branch.py`, `commit.py`, `remote.py` - Git object wrappers
   - `exercise.py` - Exercise configuration and grading
   - `helpers/` - Utility functions
-- `docs/` - Sphinx documentation
+- `docs/` - Documentation
+- `tests/` - Test suite
 
 ## Code style
 
