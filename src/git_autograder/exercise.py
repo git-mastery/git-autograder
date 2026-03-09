@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
 import pytz
-from git import InvalidGitRepositoryError
+from git import InvalidGitRepositoryError, Repo
 
 from git_autograder.answers.answers import GitAutograderAnswers
 from git_autograder.answers.answers_parser import GitAutograderAnswersParser
@@ -77,6 +77,16 @@ class GitAutograderExercise:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")
         self.__answers_parser: Optional[GitAutograderAnswersParser] = None
         self.__answers: Optional[GitAutograderAnswers] = None
+
+    @property
+    def git_repo(self) -> Repo:
+        ignored_repo_types = {"ignore", "local-ignore"}
+        if self.config.exercise_repo.repo_type in ignored_repo_types:
+            raise AttributeError(
+                "Cannot access attribute git_repo on GitAutograderExercise. "
+                "Check that your repo_type is not 'ignore' or 'local-ignore'."
+            )
+        return self.repo.repo
 
     @property
     def answers(self) -> GitAutograderAnswers:
