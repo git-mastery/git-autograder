@@ -28,3 +28,16 @@ class FileHelper:
 
     def untracked_files(self) -> List[str]:
         return self.repo.untracked_files
+    
+    def content_equal(self, path: Union[str, os.PathLike[str]], expected: str):
+        with self.file_or_none(path) as input_file:
+            if input_file is None:
+                return False
+            contents = [
+                line.strip() for line in input_file.readlines() if line.strip() != ""
+            ]
+            if contents != expected:
+                return False
+
+            return True
+
