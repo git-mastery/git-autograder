@@ -5,6 +5,7 @@ from git import Repo
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.file_helper import FileHelper
+from git_autograder.helpers.pr_helper import PrHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
 
 
@@ -28,3 +29,7 @@ class GitAutograderRepoBase(ABC):
     @property
     @abstractmethod
     def files(self) -> FileHelper: ...
+
+    @property
+    @abstractmethod 
+    def prs(self) -> PrHelper: ...
