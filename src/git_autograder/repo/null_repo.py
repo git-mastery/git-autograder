@@ -42,7 +42,7 @@ class NullGitAutograderRepo(GitAutograderRepoBase):
     @property
     def tags(self) -> TagHelper:
         raise AttributeError(
-            "Cannot access attribute files on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
+            "Cannot access attribute tags on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
 
     def __getattr__(self, name: str) -> None:

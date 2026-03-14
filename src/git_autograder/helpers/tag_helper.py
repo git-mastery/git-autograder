@@ -3,7 +3,6 @@ from typing import List, Optional
 from git import Repo
 from git.exc import GitCommandError
 
-from git_autograder.commit import GitAutograderCommit
 from git_autograder.exception import GitAutograderInvalidStateException
 from git_autograder.tag import GitAutograderTag
 
@@ -14,9 +13,8 @@ class TagHelper:
     CANNOT_QUERY_REMOTE_TAGS = "Unable to query remote tags for '{remote}'."
 
     @staticmethod
-    def _parse_remote_tag_names(raw: str) -> List[str]:
-        names: List[str] = []
-        seen = set()
+    def _parse_remote_tag_names(raw: str) -> list[str]:
+        names: list[str] = []
 
         for line in raw.splitlines():
             parts = line.split()
@@ -31,8 +29,7 @@ class TagHelper:
             if name.endswith("^{}"):
                 name = name[:-3]
 
-            if name not in seen:
-                seen.add(name)
+            if name not in names:
                 names.append(name)
 
         return names
@@ -56,16 +53,6 @@ class TagHelper:
 
     def has_tag(self, tag_name: str) -> bool:
         return self.tag_or_none(tag_name) is not None
-
-    def commit_or_none(self, tag_name: str) -> Optional[GitAutograderCommit]:
-        t = self.tag_or_none(tag_name)
-        if t is None:
-            return None
-        return t.commit
-
-    def points_to(self, tag_name: str, commit: GitAutograderCommit) -> bool:
-        tag_commit = self.commit_or_none(tag_name)
-        return tag_commit is not None and tag_commit.hexsha == commit.hexsha
 
     def remote_tag_names_or_none(self, remote: str = "origin") -> Optional[List[str]]:
         if not any(r.name == remote for r in self.repo.remotes):

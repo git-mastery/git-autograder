@@ -29,15 +29,28 @@ class FileHelper:
     def untracked_files(self) -> List[str]:
         return self.repo.untracked_files
     
-    def content_equal(self, path: Union[str, os.PathLike[str]], expected: str):
+    def is_content_equal(self, path: Union[str, os.PathLike[str]], expected: str) -> bool:
         with self.file_or_none(path) as input_file:
             if input_file is None:
                 return False
-            contents = [
+
+            input_lines = [
                 line.strip() for line in input_file.readlines() if line.strip() != ""
             ]
-            if contents != expected:
-                return False
 
-            return True
+        expected_lines = [
+            line.strip() for line in expected.splitlines() if line.strip() != ""
+        ]
 
+        return input_lines == expected_lines
+    
+    def are_files_equal(self, given: str, expected: str) -> bool:
+        """Compare normalized contents of two files."""
+
+        with (
+            open(given, "r") as given_file,
+            open(expected, "r") as expected_file,
+        ):
+            contents = given_file.read().replace("\n", "")
+            expected_contents = expected_file.read().replace("\n", "")
+            return contents == expected_contents

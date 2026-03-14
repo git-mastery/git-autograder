@@ -40,3 +40,6 @@ class GitAutograderTag:
         if lower:
             message = message.lower()
         return message
+
+    def points_to(self, commit: GitAutograderCommit) -> bool:
+        return self.commit.hexsha == commit.hexsha
