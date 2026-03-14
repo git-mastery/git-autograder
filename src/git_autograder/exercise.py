@@ -15,6 +15,7 @@ from git_autograder.exception import (
     GitAutograderWrongAnswerException,
 )
 from git_autograder.exercise_config import ExerciseConfig
+from git_autograder.helpers.pr_helper import PrContext
 from git_autograder.output import GitAutograderOutput
 from git_autograder.repo.null_repo import NullGitAutograderRepo
 from git_autograder.repo.repo import GitAutograderRepo
@@ -69,9 +70,18 @@ class GitAutograderExercise:
             if self.config.exercise_repo.repo_type == "ignore" or self.config.exercise_repo.repo_type == "local-ignore":
                 self.repo = NullGitAutograderRepo()
             else:
+                pr_number = self.config.exercise_repo.pr_number
+                pr_repo_full_name = self.config.exercise_repo.pr_repo_full_name
+                pr_context: Optional[PrContext] = None
+                if pr_number is not None and pr_repo_full_name is not None:
+                    pr_context = PrContext(
+                        pr_number=pr_number,
+                        pr_repo_full_name=pr_repo_full_name,
+                    )
                 self.repo = GitAutograderRepo(
                     self.config.exercise_name,
                     Path(exercise_path) / self.config.exercise_repo.repo_name,
+                    pr_context,
                 )
         except InvalidGitRepositoryError:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")

@@ -3,7 +3,7 @@ from git import Repo
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.file_helper import FileHelper
-from git_autograder.helpers.pr_helper import PrHelper
+from git_autograder.helpers.pr_helper import NullPrHelper, PrHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
 from git_autograder.helpers.tag_helper import TagHelper
 from git_autograder.repo.repo_base import GitAutograderRepoBase
@@ -39,6 +39,7 @@ class NullGitAutograderRepo(GitAutograderRepoBase):
         raise AttributeError(
             "Cannot access attribute files on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
+
     
     @property
     def tags(self) -> TagHelper:
@@ -47,7 +48,7 @@ class NullGitAutograderRepo(GitAutograderRepoBase):
         )
     
     @property
-    def prs(self) -> PrHelper:
+    def prs(self) -> PrHelper | NullPrHelper:
         raise AttributeError(
             "Cannot access attribute prs on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
