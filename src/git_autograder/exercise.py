@@ -15,7 +15,7 @@ from git_autograder.exception import (
     GitAutograderWrongAnswerException,
 )
 from git_autograder.exercise_config import ExerciseConfig
-from git_autograder.helpers.pr_helper import PrContext
+from git_autograder.helpers.pr_helper.pr_helper import PrContext
 from git_autograder.output import GitAutograderOutput
 from git_autograder.repo.null_repo import NullGitAutograderRepo
 from git_autograder.repo.repo import GitAutograderRepo
