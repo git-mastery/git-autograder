@@ -9,6 +9,9 @@ __all__ = [
     "GitAutograderBranch",
     "GitAutograderRemote",
     "GitAutograderCommit",
+    "GitAutograderPr",
+    "GitAutograderPrComment",
+    "GitAutograderPrReview",
     "GitAutograderExercise",
 ]
 
@@ -21,6 +24,9 @@ from .exception import (
 )
 from .exercise import GitAutograderExercise
 from .output import GitAutograderOutput
+from .pr import GitAutograderPr
+from .pr_comment import GitAutograderPrComment
+from .pr_review import GitAutograderPrReview
 from .remote import GitAutograderRemote
 from .repo.repo import GitAutograderRepo
 from .repo.repo_base import GitAutograderRepoBase

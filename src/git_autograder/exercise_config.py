@@ -52,8 +52,8 @@ class ExerciseConfig:
                 repo_title=exercise_repo["repo_title"],
                 create_fork=exercise_repo["create_fork"],
                 init=exercise_repo["init"],
-                pr_number=exercise_repo["pr_number"],
-                pr_repo_full_name=exercise_repo["pr_repo_full_name"],
+                pr_number=exercise_repo["pr_number"] if "pr_number" in exercise_repo else None,
+                pr_repo_full_name=exercise_repo["pr_repo_full_name"] if "pr_repo_full_name" in exercise_repo else None,
             ),
             downloaded_at=raw_config["downloaded_at"],
         )
