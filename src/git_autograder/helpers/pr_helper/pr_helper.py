@@ -49,13 +49,18 @@ class PrHelper(PrHelperBase):
             ",".join(fields),
         ]
 
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired:
+            raise GitAutograderInvalidStateException(
+                f"Timed out fetching PR #{self._pr_number} from {self._pr_repo_full_name}"
+            )
         if result.returncode != 0:
             stderr = result.stderr.strip() or "Unknown gh error"
             raise GitAutograderInvalidStateException(
