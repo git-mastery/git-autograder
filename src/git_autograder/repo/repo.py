@@ -31,7 +31,8 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self._remotes: RemoteHelper = RemoteHelper(self._repo)
         self._files: FileHelper = FileHelper(self._repo)
         self._tags: TagHelper = TagHelper(self._repo)
-        self._prs: PrHelper | NullPrHelper = PrHelper(self.pr_context) if self.pr_context else NullPrHelper()
+        self._prs: PrHelper | NullPrHelper = NullPrHelper()
+        self.refresh_pr_helper(self.pr_context)
 
     @property
     def repo(self) -> Repo:
@@ -60,3 +61,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
     @property
     def prs(self) -> PrHelper | NullPrHelper:
         return self._prs
+
+    def refresh_pr_helper(self, pr_context: Optional[PrContext]) -> None:
+        self.pr_context = pr_context
+        self._prs = PrHelper(pr_context) if pr_context else NullPrHelper()
