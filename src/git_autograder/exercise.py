@@ -70,18 +70,10 @@ class GitAutograderExercise:
             if self.config.exercise_repo.repo_type == "ignore" or self.config.exercise_repo.repo_type == "local-ignore":
                 self.repo = NullGitAutograderRepo()
             else:
-                pr_number = self.config.exercise_repo.pr_number
-                pr_repo_full_name = self.config.exercise_repo.pr_repo_full_name
-                pr_context: Optional[PrContext] = None
-                if pr_number is not None and pr_repo_full_name is not None:
-                    pr_context = PrContext(
-                        pr_number=pr_number,
-                        pr_repo_full_name=pr_repo_full_name,
-                    )
                 self.repo = GitAutograderRepo(
                     self.config.exercise_name,
                     Path(exercise_path) / self.config.exercise_repo.repo_name,
-                    pr_context,
+                    self.get_pr_context(),
                 )
         except InvalidGitRepositoryError:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")
@@ -156,3 +148,22 @@ class GitAutograderExercise:
 
     def wrong_answer(self, comments: List[str]) -> GitAutograderWrongAnswerException:
         return GitAutograderWrongAnswerException(comments)
+    
+    def get_pr_context(self) -> Optional[PrContext]:
+        pr_number = self.config.exercise_repo.pr_number
+        pr_repo_full_name = self.config.exercise_repo.pr_repo_full_name
+        pr_context: Optional[PrContext] = None
+        if pr_number is not None and pr_repo_full_name is not None:
+            pr_context = PrContext(
+                pr_number=pr_number,
+                pr_repo_full_name=pr_repo_full_name,
+            )
+        return pr_context
+
+    def fetch_pr(self) -> None:
+        pr_context = self.get_pr_context()
+        if pr_context is None:
+            raise GitAutograderInvalidStateException(
+                "Exercise does not have valid PR context"
+            )
+        self.repo.refresh_pr_helper(pr_context)

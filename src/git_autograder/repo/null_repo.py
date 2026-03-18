@@ -1,10 +1,11 @@
 from git import Repo
+from typing import Optional
 
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.file_helper import FileHelper
 from git_autograder.helpers.pr_helper.null_pr_helper import NullPrHelper
-from git_autograder.helpers.pr_helper.pr_helper import PrHelper
+from git_autograder.helpers.pr_helper.pr_helper import PrContext, PrHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
 from git_autograder.repo.repo_base import GitAutograderRepoBase
 
@@ -44,6 +45,11 @@ class NullGitAutograderRepo(GitAutograderRepoBase):
     def prs(self) -> PrHelper | NullPrHelper:
         raise AttributeError(
             "Cannot access attribute prs on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
+        )
+
+    def refresh_pr_helper(self, pr_context: Optional[PrContext]) -> None:
+        raise AttributeError(
+            "Cannot refresh PR helper on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
 
     def __getattr__(self, name: str) -> None:
