@@ -161,9 +161,4 @@ class GitAutograderExercise:
         return pr_context
 
     def fetch_pr(self) -> None:
-        pr_context = self.get_pr_context()
-        if pr_context is None:
-            raise GitAutograderInvalidStateException(
-                "Exercise does not have valid PR context"
-            )
-        self.repo.refresh_pr_helper(pr_context)
+        self.repo.refresh_pr_helper()

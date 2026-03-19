@@ -47,7 +47,7 @@ class NullGitAutograderRepo(GitAutograderRepoBase):
             "Cannot access attribute prs on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
 
-    def refresh_pr_helper(self, pr_context: Optional[PrContext]) -> None:
+    def refresh_pr_helper(self) -> None:
         raise AttributeError(
             "Cannot refresh PR helper on NullGitAutograderRepo. Check that your repo_type is not 'ignore'."
         )
