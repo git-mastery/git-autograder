@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 from typing import Optional
 
 from git import Repo
 
+from git_autograder.exercise_config import ExerciseConfig
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.file_helper import FileHelper
@@ -32,7 +34,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self._files: FileHelper = FileHelper(self._repo)
         self._tags: TagHelper = TagHelper(self._repo)
         self._prs: PrHelper | NullPrHelper = NullPrHelper()
-        self.refresh_pr_helper(self.pr_context)
+        self.refresh_pr_helper()
 
     @property
     def repo(self) -> Repo:
@@ -62,6 +64,23 @@ class GitAutograderRepo(GitAutograderRepoBase):
     def prs(self) -> PrHelper | NullPrHelper:
         return self._prs
 
-    def refresh_pr_helper(self, pr_context: Optional[PrContext]) -> None:
-        self.pr_context = pr_context
-        self._prs = PrHelper(pr_context) if pr_context else NullPrHelper()
+    def refresh_pr_helper(self) -> None:
+        self.pr_context = self._read_pr_context_from_config()
+        self._prs = (
+            PrHelper(self.pr_context, self._repo)
+            if self.pr_context
+            else NullPrHelper()
+        )
+
+    def _read_pr_context_from_config(self) -> Optional[PrContext]:
+        config_path = Path(self.repo_path).parent / ".gitmastery-exercise.json"
+        if not config_path.is_file():
+            return None
+
+        config = ExerciseConfig.read_config(config_path)
+        pr_number = config.exercise_repo.pr_number
+        pr_repo_full_name = config.exercise_repo.pr_repo_full_name
+        if pr_number is None or pr_repo_full_name is None:
+            return None
+
+        return PrContext(pr_number=pr_number, pr_repo_full_name=pr_repo_full_name)
