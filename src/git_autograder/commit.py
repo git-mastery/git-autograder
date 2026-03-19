@@ -4,6 +4,8 @@ from typing import Any, Iterator, List, Optional, Sequence, TextIO, Union
 
 from git import Commit, Stats
 
+from git_autograder.role_marker import RoleMarker
+
 
 class GitAutograderCommit:
     def __init__(self, commit: Commit) -> None:
@@ -73,3 +75,13 @@ class GitAutograderCommit:
         except Exception:
             content = None
         yield content
+
+    def is_from_user(self) -> bool:
+        message = self.commit.message
+        if isinstance(message, bytes):
+            message = message.decode("utf-8", errors="replace")
+
+        if message:
+            return not RoleMarker.has_role_marker(message)
+        # If there is no message, we can assume it's from a user.
+        return True
