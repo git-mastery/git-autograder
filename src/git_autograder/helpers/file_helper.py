@@ -17,13 +17,13 @@ class FileHelper:
         if not os.path.isfile(file_path):
             yield None
         else:
-            with open(file_path, "r") as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 yield file
 
     @contextmanager
     def file(self, path: Union[str, os.PathLike[str]]) -> Iterator[TextIO]:
         file_path = os.path.join(self.repo.working_dir, path)
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             yield file
 
     def untracked_files(self) -> List[str]:
