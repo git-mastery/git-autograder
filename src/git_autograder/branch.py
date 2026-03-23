@@ -141,7 +141,7 @@ class GitAutograderBranch:
                 return True
         return False
 
-    def has_at_least_commits(self, n: int, *, user_only: bool = False) -> bool:
+    def has_at_least_commits(self, n: int, *, user_only: bool = True) -> bool:
         """
         Return True if the branch has at least n commits.
 
