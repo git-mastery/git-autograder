@@ -5,12 +5,12 @@ Python library for autograding Git repositories, used by Git Mastery exercise re
 ## Dev environment
 
 - Python 3.13+
-- Install dependencies: `pip install -r requirements.txt`
-- Install package in dev mode: `pip install -e .`
+- Install uv: https://docs.astral.sh/uv/getting-started/installation/
+- Install all dependencies: `uv sync --all-groups`
 
 ## Testing
 
-- Run tests: `python -m pytest -s -vv`
+- Run tests: `uv run pytest -s -vv`
 - Tests are located in `tests/`
 
 ## Project structure
