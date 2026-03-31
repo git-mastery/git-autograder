@@ -38,3 +38,17 @@ mypy_path = "src"
 
 [tool.hatch.version]
 path = "src/git_autograder/version.py"
+
+[dependency-groups]
+test = [
+  "pytest",
+  "mypy",
+]
+docs = [
+  "sphinx",
+  "sphinx-rtd-theme",
+]
+publish = [
+  "twine",
+  "build",
+]

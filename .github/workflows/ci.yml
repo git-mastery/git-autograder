@@ -9,13 +9,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt -U --no-cache-dir
+        run: uv sync --locked --group test
       - name: Run unit tests
-        run: |
-          python -m pytest -s -vv
+        run: uv run pytest -s -vv

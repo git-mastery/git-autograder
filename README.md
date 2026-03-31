@@ -25,4 +25,4 @@ def grade(repo: GitAutograderRepo) -> GitAutograderOuput:
 
 ## Unit tests
 
-To execute the unit tests, run `python -m pytest -s -vv`.
+To execute the unit tests, run `uv run pytest -s -vv`.
