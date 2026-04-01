@@ -34,6 +34,13 @@ class GitAutograderCommit:
         containing_branches = self.commit.repo.git.branch("--contains", self.hexsha)
         return [line[2:] for line in containing_branches.split("\n")]
 
+    @property
+    def message(self) -> str:
+        msg = self.commit.message
+        if isinstance(msg, bytes):
+            return msg.decode("utf-8", errors="replace")
+        return msg
+
     def checkout(self) -> None:
         self.commit.repo.git.checkout(self.commit)
 

@@ -6,6 +6,7 @@ from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper
 from git_autograder.helpers.file_helper import FileHelper
 from git_autograder.helpers.remote_helper import RemoteHelper
+from git_autograder.helpers.tag_helper import TagHelper
 from git_autograder.repo.repo_base import GitAutograderRepoBase
 
 
@@ -24,6 +25,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self._commits: CommitHelper = CommitHelper(self._repo)
         self._remotes: RemoteHelper = RemoteHelper(self._repo)
         self._files: FileHelper = FileHelper(self._repo)
+        self._tags: TagHelper = TagHelper(self._repo)
 
     @property
     def repo(self) -> Repo:
@@ -44,3 +46,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
     @property
     def files(self) -> FileHelper:
         return self._files
+    
+    @property
+    def tags(self) -> TagHelper:
+        return self._tags

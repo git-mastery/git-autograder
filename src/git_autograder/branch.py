@@ -141,5 +141,17 @@ class GitAutograderBranch:
                 return True
         return False
 
+    def has_at_least_commits(self, n: int, *, user_only: bool = True) -> bool:
+        """
+        Return True if the branch has at least n commits.
+
+        If user_only=True, count only user commits.
+        """
+        if n < 0:
+            raise ValueError("n must be >= 0")
+
+        commits = self.user_commits if user_only else self.commits
+        return len(commits) >= n
+
     def checkout(self) -> None:
         self.branch.checkout()

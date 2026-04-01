@@ -22,3 +22,12 @@ class CommitHelper:
             return GitAutograderCommit(c)
         except Exception:
             return None
+
+    def commit_from_message(
+        self, commits: list[GitAutograderCommit], message: str
+    ) -> Optional[GitAutograderCommit]:
+        target = message.strip()
+        for commit in commits:
+            if commit.message.strip() == target:
+                return commit
+        return None

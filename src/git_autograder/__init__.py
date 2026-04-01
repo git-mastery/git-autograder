@@ -10,6 +10,7 @@ __all__ = [
     "GitAutograderRemote",
     "GitAutograderCommit",
     "GitAutograderExercise",
+    "GitAutograderTag"
 ]
 
 from .branch import GitAutograderBranch
@@ -25,3 +26,4 @@ from .remote import GitAutograderRemote
 from .repo.repo import GitAutograderRepo
 from .repo.repo_base import GitAutograderRepoBase
 from .status import GitAutograderStatus
+from .tag import GitAutograderTag
