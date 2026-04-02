@@ -36,6 +36,7 @@ class GitAutograderRepoBase(ABC):
     @abstractmethod
     def tags(self) -> TagHelper: ...
     
+    @property
     @abstractmethod 
     def prs(self) -> PrHelper | NullPrHelper: ...
 
