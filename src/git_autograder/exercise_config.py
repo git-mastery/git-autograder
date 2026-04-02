@@ -13,6 +13,8 @@ class ExerciseConfig:
         repo_title: Optional[str]
         create_fork: Optional[bool]
         init: Optional[bool]
+        pr_number: Optional[int]
+        pr_repo_full_name: Optional[str]
 
     exercise_name: str
     tags: List[str]
@@ -50,6 +52,8 @@ class ExerciseConfig:
                 repo_title=exercise_repo["repo_title"],
                 create_fork=exercise_repo["create_fork"],
                 init=exercise_repo["init"],
+                pr_number=exercise_repo["pr_number"] if "pr_number" in exercise_repo else None,
+                pr_repo_full_name=exercise_repo["pr_repo_full_name"] if "pr_repo_full_name" in exercise_repo else None,
             ),
             downloaded_at=raw_config["downloaded_at"],
         )
