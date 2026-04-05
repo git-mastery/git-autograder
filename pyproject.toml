@@ -40,7 +40,8 @@ mypy_path = "src"
 path = "src/git_autograder/version.py"
 
 [dependency-groups]
-test = [
+dev = [
+  "lefthook",
   "pytest",
   "mypy",
 ]
