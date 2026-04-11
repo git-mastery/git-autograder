@@ -100,7 +100,19 @@ def fetch_pull_request_data(pr_number: int, pr_repo_full_name: str) -> Dict[str,
             "Unexpected pull request metadata shape returned by GitHub CLI."
         )
 
-    data = payload.get("data", {}).get("repository", {}).get("pullRequest")
+    payload_data = payload.get("data")
+    if not isinstance(payload_data, dict):
+        raise GitAutograderInvalidStateException(
+            "Unexpected pull request metadata shape returned by GitHub CLI."
+        )
+
+    repository_data = payload_data.get("repository")
+    if not isinstance(repository_data, dict):
+        raise GitAutograderInvalidStateException(
+            "Unexpected pull request metadata shape returned by GitHub CLI."
+        )
+
+    data = repository_data.get("pullRequest")
     if not isinstance(data, dict):
         raise GitAutograderInvalidStateException(
             "Unexpected pull request metadata shape returned by GitHub CLI."

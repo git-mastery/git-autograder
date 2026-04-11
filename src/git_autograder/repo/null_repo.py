@@ -1,5 +1,4 @@
 from git import Repo
-from typing import Optional
 
 from git_autograder.helpers.branch_helper import BranchHelper
 from git_autograder.helpers.commit_helper import CommitHelper

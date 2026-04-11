@@ -41,11 +41,17 @@ class GitAutograderPrReview:
         # If there is no body, we can assume it's from a user.
         return True
 
-    def is_change_request(self) -> bool:
-        return self._state.upper() == "REQUEST_CHANGES" if self._state else False
+    def is_approved(self) -> bool:
+        return self._state.upper() == "APPROVED" if self._state else False
     
-    def is_comment(self) -> bool:
-        return self._state.upper() == "COMMENT" if self._state else False
+    def is_change_requested(self) -> bool:
+        return self._state.upper() == "CHANGES_REQUESTED" if self._state else False
+    
+    def is_commented(self) -> bool:
+        return self._state.upper() == "COMMENTED" if self._state else False
 
+    def is_dismissed(self) -> bool:
+        return self._state.upper() == "DISMISSED" if self._state else False
+    
     def is_content_equal(self, body: str) -> bool:
         return self._body.lower() == body.lower() if self._body else False
