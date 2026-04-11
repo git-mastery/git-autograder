@@ -20,11 +20,9 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self,
         exercise_name: str,
         repo_path: str | os.PathLike,
-        pr_context: Optional[PrContext] = None,
     ) -> None:
         self.exercise_name = exercise_name
         self.repo_path = repo_path
-        self.pr_context = pr_context
 
         self._repo: Repo = Repo(self.repo_path)
 
@@ -65,10 +63,10 @@ class GitAutograderRepo(GitAutograderRepoBase):
         return self._prs
 
     def refresh_pr_helper(self) -> None:
-        self.pr_context = self._read_pr_context_from_config()
+        pr_context = self._read_pr_context_from_config()
         self._prs = (
-            PrHelper(self.pr_context, self._repo)
-            if self.pr_context
+            PrHelper(pr_context, self._repo)
+            if pr_context
             else NullPrHelper()
         )
 
@@ -76,11 +74,14 @@ class GitAutograderRepo(GitAutograderRepoBase):
         config_path = Path(self.repo_path).parent / ".gitmastery-exercise.json"
         if not config_path.is_file():
             return None
-
+        
         config = ExerciseConfig.read_config(config_path)
-        pr_number = config.exercise_repo.pr_number
-        pr_repo_full_name = config.exercise_repo.pr_repo_full_name
-        if pr_number is None or pr_repo_full_name is None:
+        try:
+            pr_number = config.exercise_repo.pr_number
+            pr_repo_full_name = config.exercise_repo.pr_repo_full_name
+        except Exception:
             return None
-
+        
+        if pr_number is None or pr_repo_full_name is None:
+            return None        
         return PrContext(pr_number=pr_number, pr_repo_full_name=pr_repo_full_name)

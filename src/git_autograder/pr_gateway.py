@@ -100,6 +100,12 @@ def fetch_pull_request_data(pr_number: int, pr_repo_full_name: str) -> Dict[str,
             "Unexpected pull request metadata shape returned by GitHub CLI."
         )
 
+    if payload.get("errors"):
+        error_messages = [e.get("message", "Unknown error") for e in payload["errors"]]
+        raise GitAutograderInvalidStateException(
+            f"GitHub GraphQL error: {'; '.join(error_messages)}"
+        )
+
     payload_data = payload.get("data")
     if not isinstance(payload_data, dict):
         raise GitAutograderInvalidStateException(
@@ -117,5 +123,4 @@ def fetch_pull_request_data(pr_number: int, pr_repo_full_name: str) -> Dict[str,
         raise GitAutograderInvalidStateException(
             "Unexpected pull request metadata shape returned by GitHub CLI."
         )
-
     return data
