@@ -26,3 +26,7 @@ def grade(repo: GitAutograderRepo) -> GitAutograderOuput:
 ## Unit tests
 
 To execute the unit tests, run `uv run pytest -s -vv`.
+
+## Full Developer Guide
+
+The complete developer guide can be found in this [reference](https://git-mastery.org/developers/docs/libraries/git-autograder/).
