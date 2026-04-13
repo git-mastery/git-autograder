@@ -6,6 +6,6 @@ class NullPrHelper(PrHelperBase):
     @property
     def pr(self) -> GitAutograderPr:
         raise AttributeError(
-            f"Cannot access attribute pr on NullPrHelper. "
+            "Cannot access attribute pr on NullPrHelper. "
             "Check that your exercise repo's pr_context is properly initialized."
         )

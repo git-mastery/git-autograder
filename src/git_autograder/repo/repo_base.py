@@ -39,6 +39,3 @@ class GitAutograderRepoBase(ABC):
     @property
     @abstractmethod 
     def prs(self) -> PrHelper | NullPrHelper: ...
-
-    @abstractmethod
-    def refresh_pr_helper(self) -> None: ...

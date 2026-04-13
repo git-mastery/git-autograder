@@ -83,12 +83,5 @@ class GitAutograderRepo(GitAutograderRepoBase):
         
         if pr_number is None or pr_repo_full_name is None:
             return None        
-        return PrContext(pr_number=pr_number, pr_repo_full_name=pr_repo_full_name)
+        return PrContext(pr_number, pr_repo_full_name)
     
-    def refresh_pr_helper(self) -> None:
-        pr_context = GitAutograderRepo.read_pr_context_from_config(repo_path=self.repo_path)
-        self._prs = (
-            PrHelper(pr_context, self._repo)
-            if pr_context
-            else NullPrHelper()
-        )

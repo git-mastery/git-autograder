@@ -77,7 +77,7 @@ def fetch_pull_request_data(pr_number: int, pr_repo_full_name: str) -> Dict[str,
             check=False,
             timeout=60,
         )
-    except subprocess.TimeoutExpired:
+    except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
         raise GitAutograderInvalidStateException(
             f"Timed out fetching PR #{pr_number} from {pr_repo_full_name}"
         )

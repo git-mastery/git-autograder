@@ -15,7 +15,6 @@ from git_autograder.exception import (
     GitAutograderWrongAnswerException,
 )
 from git_autograder.exercise_config import ExerciseConfig
-from git_autograder.helpers.pr_helper.pr_helper import PrContext
 from git_autograder.output import GitAutograderOutput
 from git_autograder.repo.null_repo import NullGitAutograderRepo
 from git_autograder.repo.repo import GitAutograderRepo
@@ -164,7 +163,13 @@ class GitAutograderExercise:
         ignored_repo_types = {"ignore", "local-ignore"}
         if self.config.exercise_repo.repo_type in ignored_repo_types:
             raise AttributeError(
-                "Cannot access method fetch_pr on GitAutograderExercise. "
+                "Cannot access method refresh_pr_helper on GitAutograderExercise. "
                 "Check that your repo_type is not 'ignore' or 'local-ignore'."
             )
-        self.repo.refresh_pr_helper()
+
+        pr_context = GitAutograderRepo.read_pr_context_from_config(config=self.config)
+        self.repo = GitAutograderRepo(
+            self.config.exercise_name,
+            Path(self.exercise_path) / self.config.exercise_repo.repo_name,
+            pr_context=pr_context,
+        )

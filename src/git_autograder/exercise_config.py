@@ -49,11 +49,11 @@ class ExerciseConfig:
             exercise_repo=ExerciseConfig.ExerciseRepoConfig(
                 repo_type=exercise_repo["repo_type"],  # type: ignore
                 repo_name=exercise_repo["repo_name"],
-                repo_title=exercise_repo["repo_title"],
-                create_fork=exercise_repo["create_fork"],
-                init=exercise_repo["init"],
-                pr_number=exercise_repo["pr_number"] if "pr_number" in exercise_repo else None,
-                pr_repo_full_name=exercise_repo["pr_repo_full_name"] if "pr_repo_full_name" in exercise_repo else None,
+                repo_title=exercise_repo.get("repo_title"),
+                create_fork=exercise_repo.get("create_fork"),
+                init=exercise_repo.get("init"),
+                pr_number=exercise_repo.get("pr_number"),
+                pr_repo_full_name=exercise_repo.get("pr_repo_full_name")
             ),
             downloaded_at=raw_config["downloaded_at"],
         )
