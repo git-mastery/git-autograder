@@ -20,6 +20,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self,
         exercise_name: str,
         repo_path: str | os.PathLike,
+        pr_context: Optional[PrContext] = None,
     ) -> None:
         self.exercise_name = exercise_name
         self.repo_path = repo_path
@@ -31,8 +32,7 @@ class GitAutograderRepo(GitAutograderRepoBase):
         self._remotes: RemoteHelper = RemoteHelper(self._repo)
         self._files: FileHelper = FileHelper(self._repo)
         self._tags: TagHelper = TagHelper(self._repo)
-        self._prs: PrHelper | NullPrHelper = NullPrHelper()
-        self.refresh_pr_helper()
+        self._prs: PrHelper | NullPrHelper = PrHelper(pr_context, self._repo) if pr_context else NullPrHelper()
 
     @property
     def repo(self) -> Repo:
@@ -62,26 +62,33 @@ class GitAutograderRepo(GitAutograderRepoBase):
     def prs(self) -> PrHelper | NullPrHelper:
         return self._prs
 
-    def refresh_pr_helper(self) -> None:
-        pr_context = self._read_pr_context_from_config()
-        self._prs = (
-            PrHelper(pr_context, self._repo)
-            if pr_context
-            else NullPrHelper()
-        )
-
-    def _read_pr_context_from_config(self) -> Optional[PrContext]:
-        config_path = Path(self.repo_path).parent / ".gitmastery-exercise.json"
-        if not config_path.is_file():
-            return None
-        
-        config = ExerciseConfig.read_config(config_path)
+    @staticmethod
+    def read_pr_context_from_config(
+        repo_path: Optional[str | os.PathLike] = None, 
+        config: Optional[ExerciseConfig] = None
+    ) -> Optional[PrContext]:
+        if config is None:
+            if repo_path is None:
+                return None
+            config_path = Path(repo_path).parent / ".gitmastery-exercise.json"
+            if not config_path.is_file():
+                return None
+            config = ExerciseConfig.read_config(config_path)
+            
         try:
             pr_number = config.exercise_repo.pr_number
             pr_repo_full_name = config.exercise_repo.pr_repo_full_name
-        except Exception:
+        except (KeyError, AttributeError):
             return None
         
         if pr_number is None or pr_repo_full_name is None:
             return None        
         return PrContext(pr_number=pr_number, pr_repo_full_name=pr_repo_full_name)
+    
+    def refresh_pr_helper(self) -> None:
+        pr_context = GitAutograderRepo.read_pr_context_from_config(repo_path=self.repo_path)
+        self._prs = (
+            PrHelper(pr_context, self._repo)
+            if pr_context
+            else NullPrHelper()
+        )

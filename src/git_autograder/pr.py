@@ -8,9 +8,9 @@ from git_autograder.pr_builders import (
     build_comments,
     build_reviews,
 )
-from .pr_gateway import fetch_pull_request_data
-from .pr_comment import GitAutograderPrComment
-from .pr_review import GitAutograderPrReview
+from git_autograder.pr_gateway import fetch_pull_request_data
+from git_autograder.pr_comment import GitAutograderPrComment
+from git_autograder.pr_review import GitAutograderPrReview
 
 
 class GitAutograderPr:

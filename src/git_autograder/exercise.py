@@ -70,9 +70,11 @@ class GitAutograderExercise:
             if self.config.exercise_repo.repo_type == "ignore" or self.config.exercise_repo.repo_type == "local-ignore":
                 self.repo = NullGitAutograderRepo()
             else:
+                pr_context = GitAutograderRepo.read_pr_context_from_config(config=self.config)
                 self.repo = GitAutograderRepo(
                     self.config.exercise_name,
                     Path(exercise_path) / self.config.exercise_repo.repo_name,
+                    pr_context=pr_context,
                 )
         except InvalidGitRepositoryError:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")
