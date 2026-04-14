@@ -163,7 +163,7 @@ class GitAutograderExercise:
         ignored_repo_types = {"ignore", "local-ignore"}
         if self.config.exercise_repo.repo_type in ignored_repo_types:
             raise AttributeError(
-                "Cannot access method refresh_pr_helper on GitAutograderExercise. "
+                "Cannot access method fetch_pr on GitAutograderExercise. "
                 "Check that your repo_type is not 'ignore' or 'local-ignore'."
             )
 
