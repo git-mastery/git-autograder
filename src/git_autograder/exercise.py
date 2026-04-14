@@ -69,9 +69,11 @@ class GitAutograderExercise:
             if self.config.exercise_repo.repo_type == "ignore" or self.config.exercise_repo.repo_type == "local-ignore":
                 self.repo = NullGitAutograderRepo()
             else:
+                pr_context = GitAutograderRepo.read_pr_context_from_config(config=self.config)
                 self.repo = GitAutograderRepo(
                     self.config.exercise_name,
                     Path(exercise_path) / self.config.exercise_repo.repo_name,
+                    pr_context=pr_context,
                 )
         except InvalidGitRepositoryError:
             raise GitAutograderInvalidStateException("Exercise is not a Git repository")
@@ -156,3 +158,18 @@ class GitAutograderExercise:
 
     def wrong_answer(self, comments: List[str]) -> GitAutograderWrongAnswerException:
         return GitAutograderWrongAnswerException(comments)
+
+    def fetch_pr(self) -> None:
+        ignored_repo_types = {"ignore", "local-ignore"}
+        if self.config.exercise_repo.repo_type in ignored_repo_types:
+            raise AttributeError(
+                "Cannot access method fetch_pr on GitAutograderExercise. "
+                "Check that your repo_type is not 'ignore' or 'local-ignore'."
+            )
+
+        pr_context = GitAutograderRepo.read_pr_context_from_config(config=self.config)
+        self.repo = GitAutograderRepo(
+            self.config.exercise_name,
+            Path(self.exercise_path) / self.config.exercise_repo.repo_name,
+            pr_context=pr_context,
+        )
