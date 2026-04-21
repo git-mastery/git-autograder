@@ -166,7 +166,8 @@ class GitAutograderExercise:
                 "Cannot access method fetch_pr on GitAutograderExercise. "
                 "Check that your repo_type is not 'ignore' or 'local-ignore'."
             )
-
+        
+        self.config = ExerciseConfig.read_config(self.exercise_config_path)
         pr_context = GitAutograderRepo.read_pr_context_from_config(config=self.config)
         self.repo = GitAutograderRepo(
             self.config.exercise_name,
